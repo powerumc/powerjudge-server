@@ -7,7 +7,7 @@
     "judge-server",
     "judge-system"
   ],
-  "main": "./dist/index.js",
+  "main": "./dist/src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm-run-all clean build server",
@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/powerumc/powerjudge-server#readme",
   "dependencies": {
+    "@microsoft/ts-command-line": "^4.2.3",
     "express": "^4.16.4"
   },
   "devDependencies": {
