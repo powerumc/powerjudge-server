@@ -14,12 +14,17 @@
     "alwaysStrict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": "src",
+    "paths": {
+      "commandlines": ["./src/commandlines"]
+    }
   },
   "exclude": [
     "node_modules"
   ],
   "files": [
-    "./src/index.ts"
+    "./src/index.ts",
+    "./src/bin/powerjudge-server.ts"
   ]
 }

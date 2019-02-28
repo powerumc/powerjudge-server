@@ -6,7 +6,7 @@ export class RunAction extends CommandLineAction {
     constructor() {
         super({
             actionName: "run",
-            documentation: "Run powerjudge-server",
+            documentation: "Run powerjudge-server.ts",
             summary: ""
         });
     }
@@ -15,7 +15,7 @@ export class RunAction extends CommandLineAction {
     }
 
     protected onExecute(): Promise<void> {
-        console.log(`Run judge-server '${config.name}'`);
+        console.log(`Run judge-server.`);
         return Promise.resolve();
     }
 
