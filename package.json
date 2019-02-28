@@ -7,7 +7,10 @@
     "judge-server",
     "judge-system"
   ],
-  "main": "./dist/src/index.js",
+  "bin": {
+    "powerjudge-server": "./dist/bin/powerjudge-server.js"
+  },
+  "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm-run-all clean build server",
@@ -30,7 +33,10 @@
   "homepage": "https://github.com/powerumc/powerjudge-server#readme",
   "dependencies": {
     "@microsoft/ts-command-line": "^4.2.3",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "inversify": "^5.0.1",
+    "inversify-express-utils": "^6.3.2",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "typescript": "^3.3.3",

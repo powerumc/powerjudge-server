@@ -1,4 +1,6 @@
-import {PowerJudgeServer} from "./powerjudge-server";
+#!/usr/bin/env node
+
+import {PowerJudgeServer} from "../powerjudge-server";
 import {Container} from "inversify";
 
 (async () => {
