@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import {injectable, interfaces} from "inversify";
-import Newable = interfaces.Newable;
 import {container} from "./index";
+import Newable = interfaces.Newable;
 
 export function register() {
     console.log("register.");
