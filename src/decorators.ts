@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import {injectable, interfaces} from "inversify";
-import {container} from "./index";
 import Newable = interfaces.Newable;
+import {container} from "./container";
 
 export function register() {
     console.log("register.");
@@ -10,17 +10,26 @@ export function register() {
         hasInterface<T>(target: any) {
             return {
                 isSingleton() {
-                    return (ctor: Newable<T>) => {
-                        console.log(target);
-                        console.log(ctor);
-
-                        container.bind(target).to(ctor).inSingletonScope();
-
-                        Reflect.decorate([injectable()], ctor);
-                    };
+                    return inSingletonScope(target);
                 }
             }
+        },
+        isSingleton() {
+            return inSingletonScope();
         }
+    };
+}
+
+function inSingletonScope<T>(target?: any) {
+    return (ctor: Newable<T>) => {
+        target = target || ctor;
+
+        console.log(target);
+        console.log(ctor);
+
+        container.bind(target).to(ctor).inSingletonScope();
+
+        Reflect.decorate([injectable()], target);
     };
 }
 

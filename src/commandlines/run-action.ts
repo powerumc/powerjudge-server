@@ -1,11 +1,15 @@
 import {CommandLineAction, CommandLineStringParameter} from "@microsoft/ts-command-line/lib";
-import {Container} from "inversify";
+import {register} from "../decorators";
+import {Container, decorate, inject, injectable} from "inversify";
 
+decorate(injectable(), CommandLineAction);
+
+@register().isSingleton()
 export class RunAction extends CommandLineAction {
 
     private port: CommandLineStringParameter;
 
-    constructor(private container: Container) {
+    constructor(@inject('container') container: Container) {
         super({
             actionName: "run",
             documentation: "Run powerjudge-server.ts",

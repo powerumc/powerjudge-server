@@ -36,6 +36,7 @@
     "express": "^4.16.4",
     "inversify": "^5.0.1",
     "inversify-express-utils": "^6.3.2",
+    "winston": "^3.2.1",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {

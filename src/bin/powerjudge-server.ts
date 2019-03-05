@@ -1,10 +1,16 @@
 #!/usr/bin/env node
 
 import {PowerJudgeServer} from "../powerjudge-server";
+import {container} from "../container";
 import {Container} from "inversify";
 
+container.bind<Container>('container').toConstantValue(container);
+
 (async () => {
-    const container = new Container();
-    const server = new PowerJudgeServer(container);
-    await server.execute(process.argv.splice(2));
+    try {
+        const server = container.get(PowerJudgeServer);
+        await server.execute(process.argv.slice(2));
+    } catch(e) {
+        console.error(e);
+    }
 })();
