@@ -1,7 +1,7 @@
 import {CommandLineAction, CommandLineStringParameter} from "@microsoft/ts-command-line/lib";
-import {register} from "../decorators";
+import {IContainer, register} from "../decorators";
 import {Container, decorate, inject, injectable} from "inversify";
-import {IApplicationLogger} from "../services/logging/application-logger";
+import {ApplicationLogger, IApplicationLogger} from "../services/logging/application-logger";
 
 decorate(injectable(), CommandLineAction);
 
@@ -10,8 +10,8 @@ export class RunAction extends CommandLineAction {
 
     private port: CommandLineStringParameter;
 
-    constructor(@inject('container') container: Container,
-        @inject(IApplicationLogger) private logger: IApplicationLogger ) {
+    constructor(@IContainer container: Container,
+                @IApplicationLogger private logger: ApplicationLogger) {
         super({
             actionName: "run",
             documentation: "Run powerjudge-server.ts",
@@ -30,8 +30,6 @@ export class RunAction extends CommandLineAction {
     }
 
     protected onExecute(): Promise<void> {
-        console.log(`Run judge-server.`);
-
         this.logger.getInstance().info("Run judge-server.");
 
         this.run();

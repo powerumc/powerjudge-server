@@ -2,14 +2,8 @@ import {createDecorator, register} from "../../decorators";
 import * as winston from "winston";
 import DailyRotateFile = require("winston-daily-rotate-file");
 
-export interface IApplicationLogger {
-    getInstance(): winston.Logger;
-}
-
-export const IApplicationLogger = createDecorator('applicationLogger');
-
-@register().hasInterface(IApplicationLogger).isSingleton()
-export class ApplicationLogger implements IApplicationLogger {
+@register().isSingleton()
+export class ApplicationLogger {
 
     private readonly logger: winston.Logger;
 
@@ -36,3 +30,5 @@ export class ApplicationLogger implements IApplicationLogger {
         return this.logger;
     }
 }
+
+export const IApplicationLogger = createDecorator(ApplicationLogger);

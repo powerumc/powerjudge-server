@@ -1,11 +1,11 @@
 import "reflect-metadata";
-import {injectable, interfaces} from "inversify";
+import {Container, inject, injectable, interfaces} from "inversify";
 import Newable = interfaces.Newable;
 import {container} from "./container";
 
-export function register() {
-    console.log("register.");
+export const IContainer = createDecorator(Container);
 
+export function register() {
     return {
         hasInterface<T>(target: any) {
             return {
@@ -24,20 +24,13 @@ function inSingletonScope<T>(target?: any) {
     return (ctor: Newable<T>) => {
         target = target || ctor;
 
-        console.log(target);
-        console.log(ctor);
+        //console.log(`register ${target.name} -> ${ctor.name}`);
 
         container.bind(target).to(ctor).inSingletonScope();
-
         Reflect.decorate([injectable()], <Function>ctor);
     };
 }
 
-export function createDecorator<T>(named: string) {
-    const decorator = (target: any) => {
-    };
-
-    decorator.toString = () => named;
-
-    return decorator;
+export function createDecorator<T>(named: any) {
+    return inject(named);
 }

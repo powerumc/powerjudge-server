@@ -2,7 +2,7 @@ import {PowerJudgeServer} from "./powerjudge-server";
 import {container} from "./container";
 import {Container} from "inversify";
 
-container.bind<Container>('container').toConstantValue(container);
+container.bind(Container).toConstantValue(container);
 
 (async () => {
     try {
