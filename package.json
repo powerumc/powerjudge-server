@@ -8,9 +8,9 @@
     "judge-system"
   ],
   "bin": {
-    "powerjudge-server": "./dist/bin/powerjudge-server.js"
+    "powerjudge-server": "./dist/src/bin/powerjudge-server.js"
   },
-  "main": "./dist/index.js",
+  "main": "./dist/src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm-run-all clean build server",
