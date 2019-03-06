@@ -29,7 +29,7 @@ function inSingletonScope<T>(target?: any) {
 
         container.bind(target).to(ctor).inSingletonScope();
 
-        Reflect.decorate([injectable()], target);
+        Reflect.decorate([injectable()], <Function>ctor);
     };
 }
 
