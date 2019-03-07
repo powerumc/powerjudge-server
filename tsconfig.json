@@ -18,19 +18,24 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "allowJs": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "commandlines": ["./src/commandlines"],
-      "services": ["./src/services"]
+      "@commandlines": ["./src/commandlines"],
+      "@services/configurations": ["./src/services/configurations"],
+      "@services/logging": ["./src/services/logging"]
     }
   },
   "exclude": [
     "node_modules"
   ],
   "files": [
-    "./src/index.ts",
+    "./src/main.ts",
     "./src/bin/powerjudge-server.ts",
-    "./tests/index.ts"
+    "./tests/index.ts",
+    "./package.json",
+    "./config.json"
   ]
 }

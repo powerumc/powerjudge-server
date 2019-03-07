@@ -1,3 +1,4 @@
+import "./bootstrap";
 import {PowerJudgeServer} from "./powerjudge-server";
 import {container} from "./container";
 import {Container} from "inversify";

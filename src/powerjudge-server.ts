@@ -1,7 +1,7 @@
 import {CommandLineParser} from "@microsoft/ts-command-line/lib";
-import {RunAction} from "./commandlines/run-action";
+import {Container, decorate, injectable} from "inversify";
 import {IContainer, register} from "./decorators";
-import {Container, decorate, inject, injectable} from "inversify";
+import {RunAction} from "@commandlines";
 
 decorate(injectable(), CommandLineParser);
 
