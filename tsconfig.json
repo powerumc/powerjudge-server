@@ -12,12 +12,9 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
-    "strictBindCallApply": true,
     "strictPropertyInitialization": false,
     "alwaysStrict": true,
     "moduleResolution": "node",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
     "allowJs": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -34,8 +31,6 @@
   "files": [
     "./src/main.ts",
     "./src/bin/powerjudge-server.ts",
-    "./tests/index.ts",
-    "./package.json",
-    "./config.json"
+    "./tests/index.ts"
   ]
 }

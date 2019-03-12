@@ -91,6 +91,6 @@ export function register(explicitParams: ExplicitParams): () => void {
 
   return () => {
     // Return node's module loading to original state.
-    Module._resolveFilename = originalResolveFilename;
+    //Module._resolveFilename = originalResolveFilename;
   };
 }
