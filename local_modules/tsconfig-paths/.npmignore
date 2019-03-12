@@ -1,0 +1,16 @@
+.idea/
+src/
+tests/
+example/
+custom-typings/
+scripts/
+thumbs.db
+*.log
+.editorconfig
+.gitignore
+.npmignore
+base-tsconfig.json
+coverage/
+.nyc_output/
+coverage.lcov
+.travis.yml
