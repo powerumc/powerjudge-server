@@ -1,13 +1,13 @@
-import {createDecorator, register} from "@app";
-import {ApplicationLoggerService, IApplicationLoggerService} from "@app/services/logging";
+import {Injectable} from "@nestjs/common";
 import {sync} from "command-exists";
-import {DockerService, IDockerService} from "src/services/docker/docker-service";
+import {ApplicationLoggerService} from "@app/services/logging";
+import {DockerService} from "src/services/docker/docker-service";
 
-@register().inTransient()
+@Injectable()
 export class ApplicationBootstrapperService {
 
-  constructor(@IApplicationLoggerService private logger: ApplicationLoggerService,
-              @IDockerService private docker: DockerService) {
+  constructor(private logger: ApplicationLoggerService,
+              private docker: DockerService) {
   }
 
 
@@ -45,5 +45,3 @@ export class ApplicationBootstrapperService {
     return result;
   }
 }
-
-export const IApplicationBootstrapperService = createDecorator(ApplicationBootstrapperService);

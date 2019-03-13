@@ -1,15 +1,14 @@
 import "./bootstrap";
-import {PowerJudgeServer} from "@app";
-import {container} from "@app";
-import {Container} from "inversify";
-
-container.bind(Container).toConstantValue(container);
+import {NestFactory} from '@nestjs/core';
+import {AppModule, PowerJudgeServer} from "@app";
 
 (async () => {
   try {
-    const server = container.get(PowerJudgeServer);
+    const app = await NestFactory.create(AppModule);
+    const server = app.get(PowerJudgeServer);
+
     await server.execute(process.argv.slice(2));
-  } catch (e) {
+  } catch(e) {
     console.error(e);
   }
 })();

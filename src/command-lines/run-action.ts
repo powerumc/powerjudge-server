@@ -1,29 +1,24 @@
+import {Injectable} from "@nestjs/common";
 import {
   CommandLineAction,
   CommandLineIntegerParameter
 } from "@microsoft/ts-command-line/lib";
-import {Container, decorate, injectable} from "inversify";
-import {IContainer, register} from "@app";
 import {
   ApplicationBootstrapperService,
-  ApplicationConfigurationService, IApplicationBootstrapperService,
-  IApplicationConfigurationService
+  ApplicationConfigurationService,
 } from "@app/services/configurations";
-import {ApplicationLoggerService, IApplicationLoggerService} from "@app/services/logging";
-import {ApplicationService, IApplicationService} from "@app/services/application";
+import {ApplicationLoggerService} from "@app/services/logging";
+import {ApplicationService,} from "@app/services/application";
 
-decorate(injectable(), CommandLineAction);
-
-@register().isSingleton()
+@Injectable()
 export class RunAction extends CommandLineAction {
 
   private port: CommandLineIntegerParameter;
 
-  constructor(@IContainer container: Container,
-              @IApplicationLoggerService private logger: ApplicationLoggerService,
-              @IApplicationBootstrapperService private bootstrapper: ApplicationBootstrapperService,
-              @IApplicationConfigurationService private config: ApplicationConfigurationService,
-              @IApplicationService private application: ApplicationService) {
+  constructor(private logger: ApplicationLoggerService,
+              private bootstrapper: ApplicationBootstrapperService,
+              private config: ApplicationConfigurationService,
+              private application: ApplicationService) {
     super({
       actionName: "run",
       documentation: "Run powerjudge-server.ts",

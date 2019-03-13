@@ -1,8 +1,8 @@
-import {createDecorator, register} from "@app";
 import * as winston from "winston";
 import DailyRotateFile = require("winston-daily-rotate-file");
+import {Injectable} from "@nestjs/common";
 
-@register().isSingleton()
+@Injectable()
 export class ApplicationLoggerService {
 
   private readonly logger: winston.Logger;
@@ -47,5 +47,3 @@ export class ApplicationLoggerService {
     this.logger.crit(message);
   }
 }
-
-export const IApplicationLoggerService = createDecorator(ApplicationLoggerService);

@@ -22,6 +22,7 @@
     "paths": {
       "@app": ["./src"],
       "@app/command-lines": ["./src/command-lines"],
+      "@app/services": ["./src/services"],
       "@app/services/configurations": ["./src/services/configurations"],
       "@app/services/logging": ["./src/services/logging"],
       "@app/services/application": ["./src/services/application"],

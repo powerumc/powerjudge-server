@@ -1,12 +1,12 @@
-import {createDecorator, register} from "src/decorators";
-import {ApplicationLoggerService, IApplicationLoggerService} from "src/services/logging";
+import {Injectable} from "@nestjs/common";
+import {ApplicationLoggerService} from "src/services/logging";
 import * as Dockerode from "dockerode";
 
-@register().inTransient()
+@Injectable()
 export class DockerService {
   private docker: Dockerode;
 
-  constructor(@IApplicationLoggerService private logger: ApplicationLoggerService) {
+  constructor(private logger: ApplicationLoggerService) {
     this.docker = new Dockerode({
       host: "localhost",
       protocol: "http",
@@ -27,5 +27,3 @@ export class DockerService {
     });
   }
 }
-
-export const IDockerService = createDecorator(DockerService);

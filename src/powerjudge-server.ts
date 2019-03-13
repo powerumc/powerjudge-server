@@ -1,20 +1,18 @@
 import {CommandLineParser} from "@microsoft/ts-command-line/lib";
-import {Container, decorate, injectable} from "inversify";
-import {IContainer, register} from "@app";
+import {Inject, Injectable} from "@nestjs/common";
 import {RunAction} from "@app/command-lines";
+import {NestApplication} from "@nestjs/core";
 
-decorate(injectable(), CommandLineParser);
-
-@register().isSingleton()
+@Injectable()
 export class PowerJudgeServer extends CommandLineParser {
 
-  constructor(@IContainer private container: Container) {
+  constructor(private app: NestApplication) {
     super({
       toolFilename: "",
       toolDescription: "PowerJudge-Server"
     });
 
-    this.addAction(container.get(RunAction));
+    this.addAction(app.get(RunAction));
   }
 
   protected onDefineParameters(): void {

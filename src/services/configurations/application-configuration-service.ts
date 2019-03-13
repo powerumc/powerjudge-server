@@ -1,10 +1,10 @@
-import {createDecorator, register} from "@app";
+import {Injectable} from "@nestjs/common";
 
 interface IConfig {
   name: string;
 }
 
-@register().isSingleton()
+@Injectable()
 export class ApplicationConfigurationService {
 
   private packageInfo = require("../../../package.json");
@@ -21,5 +21,3 @@ export class ApplicationConfigurationService {
     return this.configInfo;
   }
 }
-
-export const IApplicationConfigurationService = createDecorator(ApplicationConfigurationService);

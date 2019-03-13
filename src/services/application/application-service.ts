@@ -1,32 +1,24 @@
-import {createDecorator, IContainer, register} from "src/decorators";
-import {ApplicationLoggerService, IApplicationLoggerService} from "@app/services/logging";
-import {InversifyExpressServer} from "inversify-express-utils";
-import {Container} from "inversify";
-import bodyParser = require("body-parser");
-import {Application} from "express";
+import {INestApplication, INestExpressApplication, Injectable} from "@nestjs/common";
 import "@app/controllers/apis";
+import {NestApplication, NestFactory} from "@nestjs/core";
+import {AppModule} from "../../app-module";
 
-@register().isSingleton()
+@Injectable()
 export class ApplicationService {
 
-  private server: InversifyExpressServer;
-  private app: Application;
+  private app: INestApplication & INestExpressApplication;
 
-  constructor(@IContainer private container: Container,
-              @IApplicationLoggerService private logger: ApplicationLoggerService) {
+  constructor() {
+  }
 
+  async init() {
+    this.app = await NestFactory.create(AppModule);
+  }
+
+  get<T>(type: any) {
+    return this.app.get(type);
   }
 
   run(value: number | undefined) {
-    this.server = new InversifyExpressServer(this.container);
-    this.server.setConfig(app => {
-      app.use(bodyParser.urlencoded({extended: true}));
-      app.use(bodyParser.json());
-    });
-
-    this.app = this.server.build();
-    this.app.listen(value);
   }
 }
-
-export const IApplicationService = createDecorator(ApplicationService);
