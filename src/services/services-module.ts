@@ -1,8 +1,8 @@
 import {Module} from "@nestjs/common";
-import {ApplicationService} from "./application";
-import {ApplicationBootstrapperService, ApplicationConfigurationService} from "./configurations";
-import {DockerService} from "./docker";
-import {ApplicationLoggerService} from "./logging";
+import {ApplicationService} from "@app/services/application";
+import {ApplicationBootstrapperService, ApplicationConfigurationService} from "@app/services/configurations";
+import {DockerService} from "@app/services/docker";
+import {ApplicationLoggerService} from "@app/services/logging";
 
 @Module({
   providers: [
@@ -10,7 +10,7 @@ import {ApplicationLoggerService} from "./logging";
     ApplicationConfigurationService,
     ApplicationBootstrapperService,
     DockerService,
-    ApplicationLoggerService
+    ApplicationLoggerService,
   ],
   exports: [
     ApplicationService,
@@ -20,4 +20,6 @@ import {ApplicationLoggerService} from "./logging";
     ApplicationLoggerService
   ]
 })
-export class ServicesModule { }
+export class ServicesModule {
+
+}

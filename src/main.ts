@@ -4,9 +4,8 @@ import {AppModule, PowerJudgeServer} from "@app";
 
 (async () => {
   try {
-    const app = await NestFactory.create(AppModule);
-    const server = app.get(PowerJudgeServer);
-
+    const nest = await NestFactory.create(AppModule);
+    const server = nest.get(PowerJudgeServer);
     await server.execute(process.argv.slice(2));
   } catch(e) {
     console.error(e);
