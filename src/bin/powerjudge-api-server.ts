@@ -3,4 +3,4 @@
 import "../bootstrap";
 import {runMain} from "@app";
 
-(async () => runMain())();
+(async () => await runMain())();

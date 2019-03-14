@@ -35,7 +35,7 @@
   ],
   "files": [
     "./src/main.ts",
-    "./src/bin/powerjudge-server.ts",
+    "./src/bin/powerjudge-api-server.ts",
     "./tests/index.ts"
   ]
 }

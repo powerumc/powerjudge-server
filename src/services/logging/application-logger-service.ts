@@ -19,7 +19,7 @@ export class ApplicationLoggerService extends Logger {
       transports: [
         new winston.transports.Console({handleExceptions: true}),
         new DailyRotateFile({
-          filename: "powerjudge-server",
+          filename: "powerjudge-api-server",
           datePattern: "YYYY-MM-DD",
           dirname: "logs"
         })

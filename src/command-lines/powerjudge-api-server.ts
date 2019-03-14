@@ -2,12 +2,12 @@ import {CommandLineParser} from "@microsoft/ts-command-line/lib";
 import {Injectable} from "@nestjs/common";
 
 @Injectable()
-export class PowerJudgeServer extends CommandLineParser {
+export class PowerjudgeApiServer extends CommandLineParser {
 
   constructor() {
     super({
       toolFilename: "",
-      toolDescription: "PowerJudge-Server"
+      toolDescription: "powerjudge-api-server"
     });
   }
 

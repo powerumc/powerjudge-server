@@ -1,10 +1,10 @@
 import {Module} from "@nestjs/common";
-import {PowerJudgeServer} from "@app";
+import {PowerjudgeApiServer} from "@app";
 import {RunAction} from "@app/command-lines";
 import {ServicesModule} from "@app/services";
 
 const services = [
-  PowerJudgeServer,
+  PowerjudgeApiServer,
   RunAction
 ];
 

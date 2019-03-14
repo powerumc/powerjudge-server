@@ -22,7 +22,7 @@ export class RunAction extends CommandLineAction {
               private application: ApplicationService) {
     super({
       actionName: "run",
-      documentation: "Run powerjudge-server.ts",
+      documentation: "Run powerjudge-api-server",
       summary: ""
     });
   }
@@ -31,9 +31,10 @@ export class RunAction extends CommandLineAction {
     this.port = this.defineIntegerParameter({
       parameterLongName: "--port",
       parameterShortName: "-p",
-      description: "Port number",
-      defaultValue: 8080,
-      argumentName: "PORT"
+      description: "port number",
+      defaultValue: DEFAULT_PORT,
+      argumentName: "NUMBER",
+      environmentVariable: "POWERJUDGE_PORT"
     });
   }
 
@@ -52,7 +53,7 @@ export class RunAction extends CommandLineAction {
     }
 
     this.logger.info(`Running server: ${this.port.value} port.`);
-    await this.application.run(this.port.value || DEFAULT_PORT);
+    await this.application.run(<number>this.port.value);
   }
 
 }
