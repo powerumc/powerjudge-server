@@ -6,7 +6,7 @@ import {RunAction} from "@app/command-lines";
 
 export async function runMain() {
   try {
-    const nest = await NestFactory.create(AppModule);
+    const nest = await NestFactory.create(AppModule, {logger: false});
     const app = nest.get(ApplicationService);
     app.init(nest);
 

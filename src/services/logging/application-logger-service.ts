@@ -1,13 +1,14 @@
 import * as winston from "winston";
 import DailyRotateFile = require("winston-daily-rotate-file");
-import {Injectable} from "@nestjs/common";
+import {Injectable, Logger} from "@nestjs/common";
 
 @Injectable()
-export class ApplicationLoggerService {
+export class ApplicationLoggerService extends Logger {
 
   private readonly logger: winston.Logger;
 
   constructor() {
+    super();
     this.logger = winston.createLogger({
       format: winston.format.combine(
         winston.format.splat(),
@@ -29,21 +30,26 @@ export class ApplicationLoggerService {
 
   debug(message: string): void {
     this.logger.debug(message);
+    super.log(message);
   }
 
   warn(message: string): void {
     this.logger.warn(message);
+    super.warn(message);
   }
 
   info(message: string): void {
     this.logger.info(message);
+    super.log(message);
   }
 
   error(message: string): void {
     this.logger.error(message);
+    super.error(message);
   }
 
   critical(message: string): void {
     this.logger.crit(message);
+    super.error(message);
   }
 }
