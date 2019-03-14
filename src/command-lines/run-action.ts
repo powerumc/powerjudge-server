@@ -8,7 +8,8 @@ import {
   ApplicationConfigurationService,
 } from "@app/services/configurations";
 import {ApplicationLoggerService} from "@app/services/logging";
-import {ApplicationService,} from "@app/services/application";
+import {ApplicationService} from "@app/services/application";
+import {DEFAULT_PORT} from "@app";
 
 @Injectable()
 export class RunAction extends CommandLineAction {
@@ -51,7 +52,7 @@ export class RunAction extends CommandLineAction {
     }
 
     this.logger.info(`Running server: ${this.port.value} port.`);
-    this.application.run(this.port.value);
+    await this.application.run(this.port.value || DEFAULT_PORT);
   }
 
 }

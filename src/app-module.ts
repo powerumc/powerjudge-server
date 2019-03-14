@@ -1,10 +1,11 @@
 import {Module} from "@nestjs/common";
-import {PowerJudgeServer} from "@app";
 import {ServicesModule} from "@app/services";
+import {CommandLinesModule} from "@app/command-lines";
 
 @Module({
-  imports: [ServicesModule],
-  exports: [ServicesModule],
-  providers: [PowerJudgeServer]
+  imports: [
+    ServicesModule,
+    CommandLinesModule
+  ]
 })
 export class AppModule { }
