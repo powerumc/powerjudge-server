@@ -42,8 +42,7 @@
     "rxjs": "^6.2.2",
     "reflect-metadata": "^0.1.13",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "3.8.0",
-    "src": "latest"
+    "winston-daily-rotate-file": "3.8.0"
   },
   "devDependencies": {
     "@types/express": "^4.16.1",
