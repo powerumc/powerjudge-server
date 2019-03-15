@@ -13,11 +13,11 @@
   "main": "./dist/src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm-run-all clean build gulp:copy-files server",
-    "start:dev": "npm-run-all clean gulp:copy-files --parallel watch:build watch:server --print-label",
+    "start": "npm-run-all clean build gulp:all server",
+    "start:dev": "npm-run-all clean build gulp:all --parallel watch:build watch:server --print-label",
     "clean": "rimraf dist",
     "build": "tsc",
-    "gulp:copy-files": "node_modules/.bin/gulp copy-files",
+    "gulp:all": "node_modules/.bin/gulp",
     "server": "node ./dist/src/main.js",
     "watch:build": "tsc --watch",
     "watch:server": "nodemon -- run"
@@ -57,6 +57,7 @@
     "typescript": "^3.3.3",
     "ts-node": "^8.0.3",
     "gulp": "^4.0.0",
+    "gulp-chmod": "^2.0.0",
     "tsconfig-paths": "file:local_modules/tsconfig-paths"
   }
 }
