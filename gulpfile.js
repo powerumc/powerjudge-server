@@ -1,11 +1,19 @@
 const gulp = require("gulp");
-const tsconfig = require("./tsconfig.json");
+const ts = require("gulp-typescript");
 
-const outDir = tsconfig.compilerOptions.outDir;
+const packages = {
+  "api": ts.createProject("./packages/api/tsconfig.json")
+};
 
-gulp.task("copy-files", (cb) => {
-    gulp.src(["config.json", "package.json"])
-        .pipe(gulp.dest(outDir));
+const modules = Object.keys(packages);
 
-    cb();
+modules.forEach(module => {
+  gulp.task(module, () => {
+    return packages[module]
+      .src()
+      .pipe(packages[module]())
+      .pipe(gulp.dest(`dist/${module}`));
+  });
 });
+
+gulp.task("build", gulp.series(modules));

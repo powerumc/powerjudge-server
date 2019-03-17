@@ -20,7 +20,7 @@ describe("tsconfig-loader", () => {
       }
     });
 
-    assert.equal(result.tsConfigPath, "/foo/bar/tsconfig.json");
+    assert.equal(result.tsConfigPath, "/foo/bar/tsconfig.base.json");
   });
 
   it("should return loaderResult.tsConfigPath as undefined when not found", () => {
@@ -47,7 +47,7 @@ describe("tsconfig-loader", () => {
       loadSync: (cwd: string, fileName: string) => {
         if (cwd === "/foo/bar" && fileName === "/foo/baz") {
           return {
-            tsConfigPath: "/foo/baz/tsconfig.json",
+            tsConfigPath: "/foo/baz/tsconfig.base.json",
             baseUrl: "./",
             paths: {}
           };
@@ -61,13 +61,13 @@ describe("tsconfig-loader", () => {
       }
     });
 
-    assert.equal(result.tsConfigPath, "/foo/baz/tsconfig.json");
+    assert.equal(result.tsConfigPath, "/foo/baz/tsconfig.base.json");
   });
 });
 
 describe("walkForTsConfig", () => {
   it("should find tsconfig in starting directory", () => {
-    const pathToTsconfig = join("/root", "dir1", "tsconfig.json");
+    const pathToTsconfig = join("/root", "dir1", "tsconfig.base.json");
     const res = walkForTsConfig(
       join("/root", "dir1"),
       path => path === pathToTsconfig
@@ -76,7 +76,7 @@ describe("walkForTsConfig", () => {
   });
 
   it("should find tsconfig in parent directory", () => {
-    const pathToTsconfig = join("/root", "tsconfig.json");
+    const pathToTsconfig = join("/root", "tsconfig.base.json");
     const res = walkForTsConfig(
       join("/root", "dir1"),
       path => path === pathToTsconfig
@@ -94,8 +94,8 @@ describe("loadConfig", () => {
   it("It should load a config", () => {
     const config = { compilerOptions: { baseUrl: "hej" } };
     const res = loadTsconfig(
-      "/root/dir1/tsconfig.json",
-      path => path === "/root/dir1/tsconfig.json",
+      "/root/dir1/tsconfig.base.json",
+      path => path === "/root/dir1/tsconfig.base.json",
       _ => JSON.stringify(config)
     );
     assert.deepEqual(res, config);
@@ -104,8 +104,8 @@ describe("loadConfig", () => {
   it("It should load a config with comments", () => {
     const config = { compilerOptions: { baseUrl: "hej" } };
     const res = loadTsconfig(
-      "/root/dir1/tsconfig.json",
-      path => path === "/root/dir1/tsconfig.json",
+      "/root/dir1/tsconfig.base.json",
+      path => path === "/root/dir1/tsconfig.base.json",
       _ => `{
           // my comment
           "compilerOptions": { 
@@ -119,8 +119,8 @@ describe("loadConfig", () => {
   it("It should load a config with trailing commas", () => {
     const config = { compilerOptions: { baseUrl: "hej" } };
     const res = loadTsconfig(
-      "/root/dir1/tsconfig.json",
-      path => path === "/root/dir1/tsconfig.json",
+      "/root/dir1/tsconfig.base.json",
+      path => path === "/root/dir1/tsconfig.base.json",
       _ => `{
           "compilerOptions": { 
             "baseUrl": "hej",
@@ -135,13 +135,13 @@ describe("loadConfig", () => {
       extends: "../base-config.json",
       compilerOptions: { baseUrl: "kalle" }
     };
-    const firstConfigPath = join("/root", "dir1", "tsconfig.json");
+    const firstConfigPath = join("/root", "dir1", "tsconfig.base.json");
     const baseConfig = {
       compilerOptions: { baseUrl: "olle", paths: { foo: ["bar"] } }
     };
     const baseConfigPath = join("/root", "base-config.json");
     const res = loadTsconfig(
-      join("/root", "dir1", "tsconfig.json"),
+      join("/root", "dir1", "tsconfig.base.json"),
       path => path === firstConfigPath || path === baseConfigPath,
       path => {
         if (path === firstConfigPath) {

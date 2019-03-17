@@ -57,7 +57,7 @@ As long as the command has something similar to a `--require` option that can lo
 If you want more granular control over tsconfig-paths you can bootstrap it. This can be useful if you for instance have compiled with `tsc` to another directory where `tsconfig.json` doesn't exists.
 
 ```javascript
-const tsConfig = require("./tsconfig.json");
+const tsConfig = require(tsconfig.base.json);
 const tsConfigPaths = require("tsconfig-paths");
 
 const baseUrl = "./"; // Either absolute or relative path. If relative it's resolved to current working directory.
