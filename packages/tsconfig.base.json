@@ -5,9 +5,8 @@
     "lib": [
       "es2016"
     ],
-    "sourceMap": true,
-    "outDir": "./dist",
     "strict": true,
+    "sourceMap": true,
     "noImplicitAny": false,
     "noImplicitThis": true,
     "strictNullChecks": true,
@@ -17,13 +16,9 @@
     "moduleResolution": "node",
     "allowJs": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "baseUrl": "."
+    "emitDecoratorMetadata": true
   },
   "exclude": [
     "node_modules"
-  ],
-  "include": [
-    "packages/**/*"
   ]
 }
