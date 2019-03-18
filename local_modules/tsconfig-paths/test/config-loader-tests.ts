@@ -47,7 +47,7 @@ describe("config-loader", (): void => {
       cwd: "/baz",
       // tslint:disable-next-line:no-any
       tsConfigLoader: (_: any) => ({
-        tsConfigPath: "/baz/tsconfig.json",
+        tsConfigPath: "/baz/tsconfig.base.json",
         baseUrl: "./src",
         paths: {}
       })
@@ -64,7 +64,7 @@ describe("config-loader", (): void => {
       cwd: "/baz",
       // tslint:disable-next-line:no-any
       tsConfigLoader: (_: any) => ({
-        tsConfigPath: "/baz/tsconfig.json",
+        tsConfigPath: "/baz/tsconfig.base.json",
         baseUrl: undefined,
         paths: {}
       })
@@ -75,11 +75,11 @@ describe("config-loader", (): void => {
     assert.isTrue(failResult.message.indexOf("baseUrl") > -1);
   });
 
-  it("should presume cwd to be a tsconfig file when loadConfig is called with absolute path to tsconfig.json", () => {
+  it("should presume cwd to be a tsconfig file when loadConfig is called with absolute path to tsconfig.base.json", () => {
     // using tsconfig-named.json to ensure that future changes to fix
     // https://github.com/dividab/tsconfig-paths/issues/31
     // do not pass this test case just because of a directory walk looking
-    // for tsconfig.json
+    // for tsconfig.base.json
     const configFile = join(__dirname, "tsconfig-named.json");
     const result = loadConfig(configFile);
 

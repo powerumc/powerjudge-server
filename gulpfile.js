@@ -1,15 +1,25 @@
 const gulp = require("gulp");
-const chmod = require("gulp-chmod");
 const tsconfig = require("./tsconfig.json");
-const package = require("./package");
 
-const outDir = tsconfig.compilerOptions.outDir;
+const packages = {
+  "api": ts.createProject("./packages/api/tsconfig.json")
+};
+
+const modules = Object.keys(packages);
+
+modules.forEach(module => {
+  gulp.task(module, () => {
+    return packages[module]
+      .src()
+      .pipe(packages[module]())
+      .pipe(gulp.dest(`dist/${module}`));
+  });
+  cb();
+});
 
 gulp.task("copy-files", (cb) => {
   gulp.src(["config.json", "package.json"])
     .pipe(gulp.dest(outDir));
-
-  cb();
 });
 
 gulp.task("chmod", (cb) => {
@@ -26,3 +36,5 @@ gulp.task("default", gulp.parallel(
     "chmod"
   ]
 ));
+
+gulp.task("build", gulp.series(modules));

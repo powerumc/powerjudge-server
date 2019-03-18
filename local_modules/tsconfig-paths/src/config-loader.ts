@@ -73,7 +73,7 @@ export function configLoader({
   if (!loadResult.tsConfigPath) {
     return {
       resultType: "failed",
-      message: "Couldn't find tsconfig.json"
+      message: "Couldn't find tsconfig.base.json"
     };
   }
 

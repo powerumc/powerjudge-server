@@ -1,5 +1,5 @@
 import {Injectable} from "@nestjs/common";
-import {ApplicationLoggerService} from "src/services/logging";
+import {ApplicationLoggerService} from "../logging";
 import * as Dockerode from "dockerode";
 
 @Injectable()

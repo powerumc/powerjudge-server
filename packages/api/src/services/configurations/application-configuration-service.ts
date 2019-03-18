@@ -7,8 +7,8 @@ interface IConfig {
 @Injectable()
 export class ApplicationConfigurationService {
 
-  private packageInfo = require("../../../package.json");
-  private configInfo = require("../../../config.json");
+  private packageInfo = require("../../../../../package.json");
+  private configInfo = require("../../../../../config.json");
 
   constructor() {
   }
