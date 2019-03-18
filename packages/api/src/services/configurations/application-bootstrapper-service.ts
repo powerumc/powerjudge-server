@@ -1,7 +1,7 @@
 import {Injectable} from "@nestjs/common";
 import {sync} from "command-exists";
-import {ApplicationLoggerService} from "../logging";
 import {DockerService} from "../docker";
+import {ApplicationLoggerService} from "powerjudge-common";
 
 @Injectable()
 export class ApplicationBootstrapperService {
@@ -12,7 +12,7 @@ export class ApplicationBootstrapperService {
 
 
   async checkAsync(): Promise<boolean> {
-    this.logger.info("Detecting requirement.");
+    this.logger.info("Detecting requirements.");
 
     let result = true;
     result = result && await this.checkDockerInstalledAsync();

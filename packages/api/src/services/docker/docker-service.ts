@@ -1,6 +1,6 @@
 import {Injectable} from "@nestjs/common";
-import {ApplicationLoggerService} from "../logging";
 import * as Dockerode from "dockerode";
+import {ApplicationLoggerService} from "powerjudge-common/dist";
 
 @Injectable()
 export class DockerService {

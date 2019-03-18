@@ -2,17 +2,17 @@ import {Module} from "@nestjs/common";
 import {ApplicationService} from "./application";
 import {ApplicationBootstrapperService, ApplicationConfigurationService} from "./configurations";
 import {DockerService} from "./docker";
-import {ApplicationLoggerService} from "./logging";
+import {CommonServicesModule} from "powerjudge-common";
 
 const services = [
   ApplicationService,
   ApplicationConfigurationService,
   ApplicationBootstrapperService,
-  DockerService,
-  ApplicationLoggerService
+  DockerService
 ];
 
 @Module({
+  imports: [CommonServicesModule],
   providers: [...services],
   exports: [...services]
 })
