@@ -1,8 +1,8 @@
 import {Module} from "@nestjs/common";
-import {ApplicationService} from "@app/services/application";
-import {ApplicationBootstrapperService, ApplicationConfigurationService} from "@app/services/configurations";
-import {DockerService} from "@app/services/docker";
-import {ApplicationLoggerService} from "@app/services/logging";
+import {ApplicationService} from "./application";
+import {ApplicationBootstrapperService, ApplicationConfigurationService} from "./configurations";
+import {DockerService} from "./docker";
+import {ApplicationLoggerService} from "./logging";
 
 const services = [
   ApplicationService,
@@ -13,7 +13,7 @@ const services = [
 ];
 
 @Module({
-  providers: services,
-  exports: services
+  providers: [...services],
+  exports: [...services]
 })
 export class ServicesModule { }

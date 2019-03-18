@@ -6,6 +6,7 @@
       "es2016"
     ],
     "strict": true,
+    "sourceMap": true,
     "noImplicitAny": false,
     "noImplicitThis": true,
     "strictNullChecks": true,
@@ -14,7 +15,6 @@
     "alwaysStrict": true,
     "moduleResolution": "node",
     "allowJs": true,
-    "inlineSourceMap": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },

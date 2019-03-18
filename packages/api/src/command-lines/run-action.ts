@@ -3,13 +3,11 @@ import {
   CommandLineAction,
   CommandLineIntegerParameter
 } from "@microsoft/ts-command-line/lib";
-import {
-  ApplicationBootstrapperService,
-  ApplicationConfigurationService,
-} from "@app/services/configurations";
-import {ApplicationLoggerService} from "@app/services/logging";
-import {ApplicationService} from "@app/services/application";
-import {DEFAULT_PORT} from "@app";
+import {ApplicationLoggerService} from "../services/logging";
+import {ApplicationBootstrapperService, ApplicationConfigurationService} from "../services/configurations";
+import {DEFAULT_PORT} from "../constraints";
+import {ApplicationService} from "../services/application";
+
 
 @Injectable()
 export class RunAction extends CommandLineAction {

@@ -1,4 +1,3 @@
-import "./bootstrap";
-import {runMain} from "@app";
+import {runMain} from ".";
 
 (async () => await runMain())();

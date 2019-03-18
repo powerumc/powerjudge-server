@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import "../bootstrap";
-import {runMain} from "@app";
+import {runMain} from "../run-main";
 
 (async () => await runMain())();

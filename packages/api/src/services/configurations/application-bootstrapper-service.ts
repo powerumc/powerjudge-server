@@ -1,7 +1,7 @@
 import {Injectable} from "@nestjs/common";
 import {sync} from "command-exists";
-import {ApplicationLoggerService} from "@app/services/logging";
-import {DockerService} from "../docker/docker-service";
+import {ApplicationLoggerService} from "../logging";
+import {DockerService} from "../docker";
 
 @Injectable()
 export class ApplicationBootstrapperService {

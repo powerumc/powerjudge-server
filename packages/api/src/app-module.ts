@@ -1,7 +1,7 @@
 import {Module} from "@nestjs/common";
-import {ServicesModule} from "@app/services";
-import {CommandLinesModule} from "@app/command-lines";
-import {ControllersModule} from "@app/controllers";
+import {ServicesModule} from "./services";
+import {CommandLinesModule} from "./command-lines";
+import {ControllersModule} from "./controllers";
 
 @Module({
   imports: [

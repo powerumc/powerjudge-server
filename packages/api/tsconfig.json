@@ -3,14 +3,14 @@
   "compilerOptions": {
     "outDir": "dist",
     "baseUrl": "src",
-    "paths": {
-      "@app": ["."],
-      "@app/command-lines": ["./command-lines"],
-      "@app/services": ["./services"],
-      "@app/services/*": ["./services/*"],
-      "@app/controllers": ["./controllers"],
-      "@app/controllers/*": ["./controllers/*"]
-    }
+//    "paths": {
+//      "@app": ["."],
+//      "@app/command-lines": ["./command-lines"],
+//      "@app/services": ["./services"],
+//      "@app/services/*": ["./services/*"],
+//      "@app/controllers": ["./controllers"],
+//      "@app/controllers/*": ["./controllers/*"]
+//    }
   },
   "exclude": [
     "node_modules"
