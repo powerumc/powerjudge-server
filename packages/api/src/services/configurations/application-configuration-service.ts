@@ -1,14 +1,10 @@
 import {Injectable} from "@nestjs/common";
 
-interface IConfig {
-  name: string;
-}
-
 @Injectable()
 export class ApplicationConfigurationService {
 
-  private packageInfo = require("../../../../../package.json");
-  private configInfo = require("../../../../../config.json");
+  private packageInfo = require("../../package.json");
+  private configInfo = require("../../config.json");
 
   constructor() {
   }
@@ -17,7 +13,7 @@ export class ApplicationConfigurationService {
     return this.packageInfo.version;
   }
 
-  get config(): IConfig {
+  get value(): any {
     return this.configInfo;
   }
 }

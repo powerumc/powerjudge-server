@@ -3,6 +3,19 @@ import {sync} from "command-exists";
 import {DockerService} from "../docker";
 import {ApplicationLoggerService} from "powerjudge-common";
 
+export interface IBootstrapperResult {
+  result: boolean;
+  detail: {
+    docker: {
+      installed: boolean;
+      connectable: boolean;
+    },
+    broker: {
+      connectable: boolean;
+    }
+  }
+}
+
 @Injectable()
 export class ApplicationBootstrapperService {
 
@@ -11,37 +24,37 @@ export class ApplicationBootstrapperService {
   }
 
 
-  async checkAsync(): Promise<boolean> {
-    this.logger.info("Detecting requirements.");
-
-    let result = true;
-    result = result && await this.checkDockerInstalledAsync();
-    result = result && await this.checkDockerConnectAsync();
-
-    return result;
-  }
-
-  private async checkDockerInstalledAsync(): Promise<boolean> {
-    this.logger.info("\t- Checking Docker");
-
-    const result = sync("docker");
-    result && this.logger.info("\t\t- Installed Docker.");
-    !result && this.logger.error("\t\t- Docker is not installed.");
-
-    return result;
-  }
-
-  private async checkDockerConnectAsync(): Promise<boolean> {
-    let result = false;
-    try {
-      if (await this.docker.infoAsync()) {
-        result = true;
+  async check(): Promise<IBootstrapperResult> {
+    let result: IBootstrapperResult = {
+      result: false,
+      detail: {
+        docker: {
+          installed: false,
+          connectable: false
+        },
+        broker: {
+          connectable: false
+        }
       }
-      this.logger.info("\t\t- Connected Docker.");
-    } catch (e) {
-      this.logger.error("\t\t- " + e);
-    }
+    };
+    await this.checkDockerInstalled(result);
+    await this.checkDockerConnect(result);
+
+    result.result = result.detail.docker.installed && result.detail.docker.connectable;
 
     return result;
+  }
+
+  private async checkDockerInstalled(result: IBootstrapperResult): Promise<void> {
+    result.detail.docker.installed = sync("docker");
+  }
+
+  private async checkDockerConnect(result: IBootstrapperResult): Promise<void> {
+    try {
+      if (await this.docker.info()) {
+        result.detail.docker.connectable = true;
+      }
+    } catch (e) {
+    }
   }
 }

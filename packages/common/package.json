@@ -17,7 +17,8 @@
     "rxjs": "^6.2.2",
     "reflect-metadata": "^0.1.13",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "3.8.0"
+    "winston-daily-rotate-file": "3.8.0",
+    "kafka-node": "^4.0.2"
   },
   "devDependencies": {
     "@types/node": "^10.12.24",

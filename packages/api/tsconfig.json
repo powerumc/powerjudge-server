@@ -2,15 +2,7 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "baseUrl": "src",
-//    "paths": {
-//      "@app": ["."],
-//      "@app/command-lines": ["./command-lines"],
-//      "@app/services": ["./services"],
-//      "@app/services/*": ["./services/*"],
-//      "@app/controllers": ["./controllers"],
-//      "@app/controllers/*": ["./controllers/*"]
-//    }
+    "baseUrl": "src"
   },
   "exclude": [
     "node_modules"
