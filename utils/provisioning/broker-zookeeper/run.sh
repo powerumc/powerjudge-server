@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+VERSION=$(cat ../../../package.json | jq -r '.version')
+echo "powerjudge version ${VERSION}"
+
 docker run \
 --name powerjudge-broker-zookeeper \
 -p 2181:2181 \
@@ -8,4 +11,4 @@ docker run \
 -v ${PWD}/conf:/opt/zookeeper/conf \
 -it \
 --rm \
-powerjudge/powerjudge-broker-zookeeper:0.0.1
+powerjudge/powerjudge-broker-zookeeper:${VERSION}
