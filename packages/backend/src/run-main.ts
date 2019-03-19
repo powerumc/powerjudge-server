@@ -1,6 +1,6 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from "./app-module";
-import {PowerjudgeApiServer, RunAction} from "./command-lines";
+import {PowerjudgeBackendServer, RunAction} from "./command-lines";
 import {ApplicationService} from "powerjudge-common";
 
 export async function runMain() {
@@ -9,7 +9,7 @@ export async function runMain() {
     const app = nest.get(ApplicationService);
     app.init(nest);
 
-    const server = app.get(PowerjudgeApiServer);
+    const server = app.get(PowerjudgeBackendServer);
     server.addAction(app.get(RunAction));
 
     await server.execute(process.argv.slice(2));

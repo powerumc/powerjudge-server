@@ -1,5 +1,5 @@
 {
-  "name": "powerjudge-api-server",
+  "name": "powerjudge-backend-server",
   "version": "0.0.1",
   "description": "Online judge server",
   "keywords": [
@@ -8,7 +8,7 @@
     "judge-system"
   ],
   "bin": {
-    "powerjudge-api-server": "./dist/bin/powerjudge-api-server.js"
+    "powerjudge-backend-server": "./dist/bin/powerjudge-backend-server.js"
   },
   "main": "./dist/main.js",
   "scripts": {
@@ -34,13 +34,13 @@
   "homepage": "https://github.com/powerumc/powerjudge-server#readme",
   "dependencies": {
     "@microsoft/ts-command-line": "^4.2.3",
-    "@nestjs/common": "^5.4.0",
-    "@nestjs/core": "^5.4.0",
     "command-exists": "^1.2.8",
     "debug": "^4.1.1",
     "dockerode": "^2.5.8",
-    "reflect-metadata": "^0.1.13",
+    "@nestjs/common": "^5.4.0",
+    "@nestjs/core": "^5.4.0",
     "rxjs": "^6.2.2",
+    "reflect-metadata": "^0.1.13",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "3.8.0"
   },

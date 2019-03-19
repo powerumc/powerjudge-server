@@ -31,7 +31,7 @@ export class RunAction extends CommandLineAction {
       description: "port number",
       defaultValue: DEFAULT_PORT,
       argumentName: "NUMBER",
-      environmentVariable: "PJ_API_PORT"
+      environmentVariable: "PJ_BACKEND_PORT"
     });
   }
 
@@ -57,13 +57,6 @@ export class RunAction extends CommandLineAction {
     this.logger.info("Detecting requirements.");
 
     const result = await this.bootstrapper.check();
-
-    result.detail.docker && this.logger.info("\t- Checking Docker");
-    result.detail.docker.installed ? this.logger.info("\t\t- Installed Docker.") : this.logger.info("Not installed Docker.");
-
-    if (result.detail.docker.installed) {
-      result.detail.docker.connectable ? this.logger.info("\t\t- Connected Docker.") : this.logger.info("Not connectable Docker.");
-    }
 
     return result.result;
   }
