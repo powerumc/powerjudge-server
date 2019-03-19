@@ -60,8 +60,6 @@ export class ApplicationBootstrapperService {
         this.logger.error(e);
         resolve();
       }
-      finally {
-      }
     });
   }
 }

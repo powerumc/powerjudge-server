@@ -2,10 +2,11 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from "./app-module";
 import {PowerjudgeApiServer, RunAction} from "./command-lines";
 import {ApplicationService} from "powerjudge-common";
+import {ApplicationLoggerService} from "powerjudge-common";
 
 export async function runMain() {
   try {
-    const nest = await NestFactory.create(AppModule, {logger: false});
+    const nest = await NestFactory.create(AppModule, {logger: ApplicationLoggerService});
     const app = nest.get(ApplicationService);
     app.init(nest);
 

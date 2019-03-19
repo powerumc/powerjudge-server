@@ -1,7 +1,14 @@
 import {Module} from "@nestjs/common";
-import {HealthCheckController} from "./apis";
+import {HealthCheckController, TestController} from "./apis";
+import {ServicesModule} from "../services";
+
+const controllers = [
+  HealthCheckController,
+  TestController
+];
 
 @Module({
-  controllers: [HealthCheckController]
+  imports: [ServicesModule],
+  controllers: [...controllers]
 })
 export class ControllersModule { }
