@@ -41,5 +41,7 @@ COPY overrides /opt/overrides
 
 VOLUME ["/kafka"]
 
+WORKDIR /opt/kafka
+
 # Use "exec" form so that it runs as PID 1 (useful for graceful shutdown)
 CMD ["start-kafka.sh"]
