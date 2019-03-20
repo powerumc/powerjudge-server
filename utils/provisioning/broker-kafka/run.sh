@@ -7,7 +7,6 @@ docker run \
 --name powerjudge-broker-kafka \
 -p 9092:9092 \
 -v /var/run/docker.sock:/var/run/docker.sock \
--e KAFKA_BROKER_ID="0" \
 -e KAFKA_ZOOKEEPER_CONNECT="zookeeper:2181" \
 -e KAFKA_ADVERTISED_HOST_NAME="localhost" \
 -e KAFKA_ADVERTISED_PORT="9092" \
