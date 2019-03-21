@@ -6,7 +6,7 @@ import {ApplicationLoggerService} from "powerjudge-common";
 
 export async function runMain() {
   try {
-    const nest = await NestFactory.create(AppModule, {logger: ApplicationLoggerService});
+    const nest = await NestFactory.create(AppModule, {logger: false});
     const app = nest.get(ApplicationService);
     app.init(nest);
 

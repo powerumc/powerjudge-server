@@ -58,10 +58,22 @@ export class RunAction extends CommandLineAction {
 
     const result = await this.bootstrapper.check();
 
-    result.detail.broker && this.logger.info("\t- Broker");
-    result.detail.broker.connectable
-      ? this.logger.info("\t\t- Connected")
-      : this.logger.info("\t\t- Could not connect");
+    if (result.detail.broker) {
+      this.logger.info("\t- Broker");
+      result.detail.broker.connectable
+        ? this.logger.info("\t\t- Connected")
+        : this.logger.info("\t\t- Could not connect");
+
+      result.detail.broker.topicExists
+        ? this.logger.info("\t\t- Topic exists")
+        : this.logger.info("\t\t- Topic not exists");
+
+      result.detail.broker.topicCreated
+        ? this.logger.info("\t\t- Created")
+        : this.logger.info("\t\t- Pass");
+    } else {
+      this.logger.info("\t\t- Not configured");
+    }
 
     return result.result;
   }

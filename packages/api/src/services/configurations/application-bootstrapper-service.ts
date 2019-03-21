@@ -1,6 +1,5 @@
 import {Injectable} from "@nestjs/common";
-import {ApplicationLoggerService} from "powerjudge-common";
-import {KafkaClient} from "kafka-node";
+import {ApplicationLoggerService, BrokerProducerService, IBrokerOption} from "powerjudge-common";
 import {ApplicationConfigurationService} from "./application-configuration-service";
 
 export interface IBootstrapperResult {
@@ -8,15 +7,20 @@ export interface IBootstrapperResult {
   detail: {
     broker: {
       connectable: boolean;
+      topicExists: boolean;
+      topicCreated: boolean;
     }
   }
 }
 
 @Injectable()
 export class ApplicationBootstrapperService {
+  private readonly option: IBrokerOption;
 
   constructor(private logger: ApplicationLoggerService,
-              private config: ApplicationConfigurationService) {
+              private config: ApplicationConfigurationService,
+              private producer: BrokerProducerService) {
+    this.option = <IBrokerOption>this.config.value.servers.broker;
   }
 
 
@@ -25,41 +29,40 @@ export class ApplicationBootstrapperService {
       result: false,
       detail: {
         broker: {
-          connectable: false
+          connectable: false,
+          topicExists: false,
+          topicCreated: false
         }
       }
     };
     await this.checkBrokerConnectable(result);
+    await this.checkBrokerTopicExists(result);
 
     result.result = result.detail.broker.connectable;
 
     return result;
   }
 
-  private checkBrokerConnectable(result: IBootstrapperResult): Promise<void> {
-    const value = this.config.value.servers.broker;
-    const client = new KafkaClient({
-      kafkaHost: `${value.host}:${value.port}`
-    });
+  private async checkBrokerConnectable(result: IBootstrapperResult) {
+    try {
+      await this.producer.connect(this.option);
+      result.detail.broker.connectable = true;
+    } catch(e) {
+      this.logger.error(e);
+    }
+  }
 
-    return new Promise<void>(resolve => {
-      const timeoutId = setTimeout(() => {
-        clearTimeout(timeoutId);
-        resolve();
-      }, 2000);
+  private async checkBrokerTopicExists(result: IBootstrapperResult) {
+    try {
+      result.detail.broker.topicExists = await this.producer.topicExists(this.option.topic.name);
 
-      try {
-        client.connect();
-        client.on("connect", () => {
-          clearTimeout(timeoutId);
-          result.detail.broker.connectable = true;
-          client.close();
-          resolve();
-        });
-      } catch(e) {
-        this.logger.error(e);
-        resolve();
+      if (!result.detail.broker.topicExists) {
+        await this.producer.createTopic(this.option.topic.name);
+        result.detail.broker.topicCreated = true;
       }
-    });
+
+    } catch(e) {
+      this.logger.error(e);
+    }
   }
 }
