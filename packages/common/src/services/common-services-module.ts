@@ -1,13 +1,12 @@
 import {Module} from "@nestjs/common";
 import {ApplicationService} from "./application";
 import {ApplicationLoggerService} from "./logging";
-import {BrokerConsumerService, BrokerProducerService} from "./broker";
+import {BrokerProducerService} from "./broker";
 
 const services = [
   ApplicationService,
   ApplicationLoggerService,
-  BrokerProducerService,
-  BrokerConsumerService
+  BrokerProducerService
 ];
 
 @Module({

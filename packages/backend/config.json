@@ -10,6 +10,11 @@
       "hosts": "localhost:9092",
       "topic": {
         "name": "powerjudge"
+      },
+      "consumer": {
+        "data": {
+          "path": "./data"
+        }
       }
     }
   }

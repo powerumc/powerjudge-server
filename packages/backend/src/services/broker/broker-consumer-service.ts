@@ -1,7 +1,8 @@
 import {Injectable} from "@nestjs/common";
+import * as fs from "fs";
 import {Sema} from "async-sema";
 import {ConsumerGroupStream, KafkaClient} from "kafka-node";
-import {ApplicationLoggerService, IBrokerOption, IDisposable} from "powerjudge-common";
+import {ApplicationLoggerService, IBrokerOption, IDisposable, FsUtils} from "powerjudge-common";
 
 @Injectable()
 export class BrokerConsumerService implements IDisposable {
@@ -16,7 +17,7 @@ export class BrokerConsumerService implements IDisposable {
   }
 
   connect(option: IBrokerOption) {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       try {
         this.consumer = new ConsumerGroupStream({
           kafkaHost: option.hosts,
@@ -46,12 +47,18 @@ export class BrokerConsumerService implements IDisposable {
         this.client = this.consumer.client;
         this.option = option;
 
+        await this.prepare(this.option.consumer.data.path);
+
         resolve();
       } catch(e) {
         this.logger.error(e);
         reject(e);
       }
     });
+  }
+
+  private async prepare(path: fs.PathLike) {
+    await FsUtils.mkdir(this.option.consumer.data.path);
   }
 
   dispose(): Promise<void> {

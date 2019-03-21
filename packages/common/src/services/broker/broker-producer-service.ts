@@ -1,9 +1,9 @@
 import {Injectable} from "@nestjs/common";
-import {ApplicationLoggerService} from "../logging";
 import {IBrokerOption} from "./broker-option";
 import {KafkaClient, Producer} from "kafka-node";
 import {IDisposable} from "../../interfaces";
 import {NumberUtils} from "../../utils";
+import {ApplicationLoggerService} from "../logging";
 
 export interface IProducerMessage {
   id: string;

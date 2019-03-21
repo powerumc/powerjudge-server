@@ -1,9 +1,9 @@
 import {Injectable} from "@nestjs/common";
 import {DockerService} from "../docker";
-import {ApplicationLoggerService} from "powerjudge-common";
+import {ApplicationLoggerService, IBrokerOption} from "powerjudge-common";
 import {sync} from "command-exists";
 import {ApplicationConfigurationService} from "./application-configuration-service";
-import {BrokerConsumerService, IBrokerOption} from "powerjudge-common";
+import {BrokerConsumerService} from "../broker";
 
 export interface IBootstrapperResult {
   result: boolean;
