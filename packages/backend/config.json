@@ -7,8 +7,10 @@
       "socketPath": "/var/run/docker.sock"
     },
     "broker": {
-      "host": "localhost",
-      "port": "9092"
+      "hosts": "localhost:9092",
+      "topic": {
+        "name": "powerjudge"
+      }
     }
   }
 }

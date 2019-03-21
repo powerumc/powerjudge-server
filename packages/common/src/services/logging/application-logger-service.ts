@@ -40,8 +40,8 @@ export class ApplicationLoggerService extends Logger {
     this.logger.info(message);
   }
 
-  error(message: string): void {
-    this.logger.error(message);
+  error(message: string | Error): void {
+    this.logger.error(<object>message);
   }
 
   critical(message: string): void {

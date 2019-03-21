@@ -58,19 +58,25 @@ export class RunAction extends CommandLineAction {
 
     const result = await this.bootstrapper.check();
 
-    result.detail.docker && this.logger.info("\t- Docker");
-    result.detail.docker.installed
-      ? this.logger.info("\t\t- Installed")
-      : this.logger.info("\t\t- Not installed");
+    this.logger.info("\t- Docker");
+    if (result.detail.docker) {
+      result.detail.docker.installed
+        ? this.logger.info("\t\t- Installed")
+        : this.logger.info("\t\t- Not installed");
+    } else {
+      this.logger.info("\t\t- Not configured");
+    }
 
     result.detail.docker.connectable
       ? this.logger.info("\t\t- Connected")
       : this.logger.info("\t\t- Could not connect");
 
-    result.detail.broker && this.logger.info("\t- Broker");
-    result.detail.broker.connectable
-      ? this.logger.info("\t\t- Connected")
-      : this.logger.info("\t\t- Could not connect");
+    if (result.detail.broker) {
+      this.logger.info("\t- Broker");
+      result.detail.broker.connectable
+        ? this.logger.info("\t\t- Connected")
+        : this.logger.info("\t\t- Could not connect");
+    }
 
     return result.result;
   }

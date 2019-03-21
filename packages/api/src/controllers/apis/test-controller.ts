@@ -17,7 +17,7 @@ export class TestController {
     const value = "Hello World " + NumberUtils.random(1, 100);
     await this.producer.send({
       id,
-      value
+      value: {value}
     });
 
     return `Send ${value}`;

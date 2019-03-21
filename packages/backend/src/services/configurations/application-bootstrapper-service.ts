@@ -2,8 +2,8 @@ import {Injectable} from "@nestjs/common";
 import {DockerService} from "../docker";
 import {ApplicationLoggerService} from "powerjudge-common";
 import {sync} from "command-exists";
-import {KafkaClient} from "kafka-node";
 import {ApplicationConfigurationService} from "./application-configuration-service";
+import {BrokerConsumerService, IBrokerOption} from "powerjudge-common";
 
 export interface IBootstrapperResult {
   result: boolean;
@@ -20,12 +20,14 @@ export interface IBootstrapperResult {
 
 @Injectable()
 export class ApplicationBootstrapperService {
+  private readonly option: IBrokerOption;
 
   constructor(private logger: ApplicationLoggerService,
               private config: ApplicationConfigurationService,
-              private docker: DockerService) {
+              private docker: DockerService,
+              private consumer: BrokerConsumerService) {
+    this.option = <IBrokerOption>this.config.value.servers.broker;
   }
-
 
   async check(): Promise<IBootstrapperResult> {
     let result: IBootstrapperResult = {
@@ -40,13 +42,18 @@ export class ApplicationBootstrapperService {
         }
       }
     };
-    await this.checkDockerInstalled(result);
-    await this.checkDockerConnect(result);
-    await this.checkBrokerConnectable(result);
 
-    result.result = result.detail.docker.installed
-      && result.detail.docker.connectable
-      && result.detail.broker.connectable;
+    try {
+      await this.checkDockerInstalled(result);
+      await this.checkDockerConnect(result);
+      await this.checkBrokerConnectable(result);
+    } catch(e) {
+      this.logger.error(e);
+    } finally {
+      result.result = result.detail.docker.installed
+        && result.detail.docker.connectable
+        && result.detail.broker.connectable;
+    }
 
     return result;
   }
@@ -64,30 +71,12 @@ export class ApplicationBootstrapperService {
     }
   }
 
-  private checkBrokerConnectable(result: IBootstrapperResult): Promise<void> {
-    const value = this.config.value.servers.broker;
-    const client = new KafkaClient({
-      kafkaHost: `${value.host}:${value.port}`
-    });
-
-    return new Promise<void>(resolve => {
-      const timeoutId = setTimeout(() => {
-        clearTimeout(timeoutId);
-        resolve();
-      }, 2000);
-
-      try {
-        client.connect();
-        client.on("connect", () => {
-          clearTimeout(timeoutId);
-          result.detail.broker.connectable = true;
-          client.close();
-          resolve();
-        });
-      } catch(e) {
-        this.logger.error(e);
-        resolve();
-      }
-    });
+  private async checkBrokerConnectable(result: IBootstrapperResult) {
+    try {
+      await this.consumer.connect(this.option);
+      result.detail.broker.connectable = true;
+    } catch (e) {
+      this.logger.error(e);
+    }
   }
 }
