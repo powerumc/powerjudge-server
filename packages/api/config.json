@@ -1,11 +1,6 @@
 {
   "name": "powerjudge-api-server",
   "servers": {
-    "docker": {
-      "protocol": "http",
-      "host": "localhost",
-      "socketPath": "/var/run/docker.sock"
-    },
     "broker": {
       "hosts": "localhost:9092",
       "topic": {
