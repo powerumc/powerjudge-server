@@ -1,5 +1,4 @@
 import {Injectable} from "@nestjs/common";
-import {IBrokerOption} from "./broker-option";
 import {KafkaClient, Producer} from "kafka-node";
 import {IDisposable} from "../../interfaces";
 import {NumberUtils} from "../../utils";
@@ -9,6 +8,19 @@ export interface IProducerMessage {
   id: string;
   value: object;
 }
+
+export interface IBrokerOption {
+  hosts: string;
+  topic: {
+    name: string;
+  },
+  consumer: {
+    data: {
+      path: string;
+    }
+  }
+}
+
 
 @Injectable()
 export class BrokerProducerService implements IDisposable {

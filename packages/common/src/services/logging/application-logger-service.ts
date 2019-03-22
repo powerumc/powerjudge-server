@@ -42,6 +42,7 @@ export class ApplicationLoggerService extends Logger {
 
   error(message: string | Error): void {
     this.logger.error(<object>message);
+    console.error(message);
   }
 
   critical(message: string): void {
