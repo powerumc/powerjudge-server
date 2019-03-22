@@ -35,11 +35,10 @@ export class RunAction extends CommandLineAction {
     });
   }
 
-  protected async onExecute(): Promise<void> {
+  protected async onExecute() {
     this.logger.info(`Run ${this.config.value.name} ${this.config.version}.`);
 
     await this.run();
-    return Promise.resolve();
   }
 
   private async run(): Promise<void> {

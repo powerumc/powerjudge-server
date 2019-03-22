@@ -58,11 +58,11 @@ export class ApplicationBootstrapperService {
     return result;
   }
 
-  private async checkDockerInstalled(result: IBootstrapperResult): Promise<void> {
+  private async checkDockerInstalled(result: IBootstrapperResult) {
     result.detail.docker.installed = sync("docker");
   }
 
-  private async checkDockerConnect(result: IBootstrapperResult): Promise<void> {
+  private async checkDockerConnect(result: IBootstrapperResult) {
     try {
       if (await this.docker.info()) {
         result.detail.docker.connectable = true;

@@ -3,7 +3,11 @@ import {
   CommandLineAction,
   CommandLineIntegerParameter
 } from "@microsoft/ts-command-line/lib";
-import {ApplicationBootstrapperService, ApplicationConfigurationService} from "../services/configurations";
+import {
+  ApplicationBootstrapperService,
+  ApplicationConfigurationService,
+  IBootstrapperResult
+} from "../services/configurations";
 import {DEFAULT_PORT} from "../constraints";
 import {ApplicationService, ApplicationLoggerService} from "powerjudge-common";
 
@@ -35,11 +39,10 @@ export class RunAction extends CommandLineAction {
     });
   }
 
-  protected async onExecute(): Promise<void> {
+  protected async onExecute() {
     this.logger.info(`Run ${this.config.value.name} ${this.config.version}.`);
 
     await this.run();
-    return Promise.resolve();
   }
 
   private async run(): Promise<void> {
@@ -58,8 +61,15 @@ export class RunAction extends CommandLineAction {
 
     const result = await this.bootstrapper.check();
 
+    this.checkBroker(result);
+    this.checkRedis(result);
+
+    return result.result;
+  }
+
+  private checkBroker(result: IBootstrapperResult) {
+    this.logger.info("\t- Broker");
     if (result.detail.broker) {
-      this.logger.info("\t- Broker");
       result.detail.broker.connectable
         ? this.logger.info("\t\t- Connected")
         : this.logger.info("\t\t- Could not connect");
@@ -74,8 +84,16 @@ export class RunAction extends CommandLineAction {
     } else {
       this.logger.info("\t\t- Not configured");
     }
-
-    return result.result;
   }
 
+  private checkRedis(result: IBootstrapperResult) {
+    this.logger.info("\t- Redis");
+    if (result.detail.redis) {
+      result.detail.redis.connectable
+        ? this.logger.info("\t\t- Connected")
+        : this.logger.info("\t\t- Could not connect");
+    } else {
+      this.logger.info("\t\t- Not configured");
+    }
+  }
 }

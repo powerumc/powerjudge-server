@@ -25,7 +25,7 @@ export class BrokerConsumerService implements IDisposable {
           encoding: "utf8",
           groupId: option.topic.name + "-group",
           maxTickMessages: 1,
-          protocol: ["roundrobin"]
+          protocol: ["roundrobin"],
         }, option.topic.name);
 
         this.consumer.on("error", (error) => {

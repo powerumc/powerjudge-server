@@ -22,8 +22,10 @@ export class FsUtils {
             }
 
             resolve();
-          })
+          });
         }
+
+        resolve();
       } catch(e) {
         reject(e);
       }
