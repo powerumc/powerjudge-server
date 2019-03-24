@@ -63,6 +63,7 @@ export class RunAction extends CommandLineAction {
 
     this.checkBroker(result);
     this.checkRedis(result);
+    this.checkMongo(result);
 
     return result.result;
   }
@@ -90,6 +91,17 @@ export class RunAction extends CommandLineAction {
     this.logger.info("\t- Redis");
     if (result.detail.redis) {
       result.detail.redis.connectable
+        ? this.logger.info("\t\t- Connected")
+        : this.logger.info("\t\t- Could not connect");
+    } else {
+      this.logger.info("\t\t- Not configured");
+    }
+  }
+
+  private checkMongo(result: IBootstrapperResult) {
+    this.logger.info("\t- Mongo");
+    if (result.detail.mongo) {
+      result.detail.mongo.connectable
         ? this.logger.info("\t\t- Connected")
         : this.logger.info("\t\t- Could not connect");
     } else {

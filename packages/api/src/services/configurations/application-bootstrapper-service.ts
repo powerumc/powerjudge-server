@@ -1,5 +1,13 @@
 import {Injectable} from "@nestjs/common";
-import {ApplicationLoggerService, BrokerProducerService, IBrokerOption, IRedisOption, RedisService} from "powerjudge-common";
+import {
+  ApplicationLoggerService,
+  BrokerProducerService,
+  IBrokerOption,
+  IRedisOption,
+  RedisService,
+  MongoService,
+  IMongoOption
+} from "powerjudge-common";
 import {ApplicationConfigurationService} from "./application-configuration-service";
 
 export interface IBootstrapperResult {
@@ -12,6 +20,9 @@ export interface IBootstrapperResult {
     },
     redis: {
       connectable: boolean;
+    },
+    mongo: {
+      connectable: boolean;
     }
   }
 }
@@ -22,7 +33,8 @@ export class ApplicationBootstrapperService {
   constructor(private logger: ApplicationLoggerService,
               private config: ApplicationConfigurationService,
               private producer: BrokerProducerService,
-              private redis: RedisService) {
+              private redis: RedisService,
+              private mongo: MongoService) {
   }
 
 
@@ -37,6 +49,9 @@ export class ApplicationBootstrapperService {
         },
         redis: {
           connectable: false
+        },
+        mongo: {
+          connectable: false
         }
       }
     };
@@ -47,7 +62,12 @@ export class ApplicationBootstrapperService {
     const redisOption = <IRedisOption>this.config.value.servers.redis;
     await this.checkRedisConnectable(redisOption, result);
 
-    result.result = result.detail.broker.connectable;
+    const mongoOption = <IMongoOption>this.config.value.servers.mongo;
+    await this.checkMongoConnectable(mongoOption, result);
+
+    result.result = result.detail.broker.connectable
+      && result.detail.redis.connectable
+      && result.detail.mongo.connectable;
 
     return result;
   }
@@ -56,7 +76,7 @@ export class ApplicationBootstrapperService {
     try {
       await this.producer.connect(option);
       result.detail.broker.connectable = true;
-    } catch(e) {
+    } catch (e) {
       this.logger.error(e);
     }
   }
@@ -70,7 +90,7 @@ export class ApplicationBootstrapperService {
         result.detail.broker.topicCreated = true;
       }
 
-    } catch(e) {
+    } catch (e) {
       this.logger.error(e);
     }
   }
@@ -80,7 +100,17 @@ export class ApplicationBootstrapperService {
       await this.redis.connect(redisOption);
       result.detail.redis.connectable = true;
       await this.redis.close();
-    } catch(e) {
+    } catch (e) {
+      this.logger.error(e);
+    }
+  }
+
+  private async checkMongoConnectable(mongoOption: IMongoOption, result: IBootstrapperResult) {
+    try {
+      await this.mongo.connect(mongoOption);
+      result.detail.mongo.connectable = true;
+      await this.mongo.close();
+    } catch (e) {
       this.logger.error(e);
     }
   }

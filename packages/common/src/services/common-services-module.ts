@@ -3,12 +3,14 @@ import {ApplicationService} from "./application";
 import {ApplicationLoggerService} from "./logging";
 import {BrokerProducerService} from "./broker";
 import {RedisService} from "./redis";
+import {MongoService} from "./mongo";
 
 const services = [
   ApplicationService,
   ApplicationLoggerService,
   BrokerProducerService,
-  RedisService
+  RedisService,
+  MongoService
 ];
 
 @Module({
