@@ -118,10 +118,8 @@ export class BrokerProducerService implements IDisposable {
 
   send(message: IProducerMessage): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      const partition = NumberUtils.random(1, 10);
       this.producer.send([{
         topic: this.option.topic.name,
-        partition: partition,
         messages: JSON.stringify(message)
       }], (error, data) => {
         if (error) {
