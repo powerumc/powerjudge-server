@@ -21,9 +21,8 @@ WORKDIR /opt/zookeeper
 # See https://zookeeper.apache.org/doc/r3.4.13/zookeeperAdmin.html#sc_zkCommands
 HEALTHCHECK CMD [ $(echo ruok | nc 127.0.0.1:2181) == "imok" ] || exit 1
 
-#VOLUME ["/opt/zookeeper/conf", "/data/zookeeper"]
 VOLUME ["/opt/zookeeper/conf"]
-VOLUME ["/data/zookeeper/data", "/data/zookeeper/data"]
+VOLUME ["/pj/zookeeper/data", "/pj/zookeeper/data"]
 
 ENTRYPOINT ["/opt/zookeeper/bin/zkServer.sh"]
 CMD ["start-foreground"]

@@ -39,7 +39,8 @@ RUN apk add --no-cache bash curl jq docker \
 
 COPY overrides /opt/overrides
 
-VOLUME ["/kafka"]
+VOLUME ["/pj/kafka/data", "/pj/kafka/data"]
+VOLUME ["/pj/kafka/log", "/pj/kafka/log"]
 
 WORKDIR /opt/kafka
 

@@ -9,6 +9,7 @@ docker run \
 -p 2888:2888 \
 -p 3888:3888 \
 -v ${PWD}/conf:/opt/zookeeper/conf \
+-v /pj/zookeeper/data:/pj/zookeeper/data \
 -it \
 --rm \
 powerjudge/powerjudge-broker-zookeeper:${VERSION}
