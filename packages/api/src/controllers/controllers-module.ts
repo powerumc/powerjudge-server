@@ -1,9 +1,10 @@
 import {Module} from "@nestjs/common";
-import {HealthCheckController, TestController} from "./apis";
+import {CodeController, HealthCheckController, TestController} from "./apis";
 import {ServicesModule} from "../services";
 
 const controllers = [
   HealthCheckController,
+  CodeController,
   TestController
 ];
 

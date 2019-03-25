@@ -8,6 +8,6 @@ import {ControllersModule} from "./controllers";
     ServicesModule,
     CommandLinesModule,
     ControllersModule
-  ],
+  ]
 })
 export class AppModule { }

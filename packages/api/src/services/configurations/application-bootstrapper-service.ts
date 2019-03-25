@@ -109,7 +109,6 @@ export class ApplicationBootstrapperService {
     try {
       await this.mongo.connect(mongoOption);
       result.detail.mongo.connectable = true;
-      await this.mongo.close();
     } catch (e) {
       this.logger.error(e);
     }
