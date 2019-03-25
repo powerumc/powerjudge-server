@@ -13,16 +13,16 @@ export class CodeController {
   @Post("run")
   async run(@Body() request: IFilesRequest) {
     try {
-      this.logger.debug(request);
+      this.logger.debug(JSON.stringify(request));
 
       let model = new CodesModel({
         uid: Guid.create().toString(),
         language: request.language,
         files: request.files
       });
-      await model.save();
+      const result = await model.save();
 
-      return "ok";
+      return result;
     } catch(e) {
       this.logger.error(e);
     }
