@@ -22,9 +22,10 @@
       "port": 6379
     },
     "mongo": {
-      "uri": "mongodb://localhost:27017/pj",
+      "uri": "mongodb://localhost:27017",
       "user": "pjadmin",
-      "password": "pjadmin"
+      "password": "pjadmin",
+      "db": "pj"
     }
   }
 }

@@ -7,6 +7,7 @@ export interface IMongoOption {
   uri: string;
   user: string;
   password: string;
+  db: string;
 }
 
 @Injectable()
@@ -21,12 +22,10 @@ export class MongoService {
       useNewUrlParser: true
     };
 
-    if (option.user || option.password) {
-      mongooseOption.auth = {
-        user: option.user,
-        password: option.password
-      };
-    }
+    mongooseOption.auth = {};
+    mongooseOption.auth.user = option.user || undefined;
+    mongooseOption.auth.password = option.password || undefined;
+    mongooseOption.dbName = option.db || undefined;
 
     this.client = await mongoose.connect(option.uri, mongooseOption);
   }
