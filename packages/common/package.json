@@ -12,8 +12,8 @@
   "author": "powerumc",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@nestjs/common": "^5.4.0",
-    "@nestjs/core": "^5.4.0",
+    "@nestjs/common": "^6.0.2",
+    "@nestjs/core": "^6.0.2",
     "@nestjs/mongoose": "^6.0.0",
     "ioredis": "^4.6.2",
     "kafka-node": "^4.0.2",
