@@ -13,6 +13,7 @@ export interface IBrokerOption {
   hosts: string;
   topic: {
     name: string;
+    partitions: number;
   },
   consumer: {
     data: {
@@ -83,7 +84,7 @@ export class BrokerProducerService implements IDisposable {
       this.client.createTopics([
         {
           topic: topicName,
-          partitions: 10,
+          partitions: this.option.topic.partitions,
           replicationFactor: 1,
           configEntries: [
             {
@@ -120,7 +121,8 @@ export class BrokerProducerService implements IDisposable {
     return new Promise<void>((resolve, reject) => {
       this.producer.send([{
         topic: this.option.topic.name,
-        messages: JSON.stringify(message)
+        messages: JSON.stringify(message),
+        partition: NumberUtils.random(1, this.option.topic.partitions)
       }], (error, data) => {
         if (error) {
           this.logger.error(error);
