@@ -39,7 +39,7 @@ export class BrokerProducerService implements IDisposable {
     this.client = new KafkaClient({
       autoConnect: false,
       connectRetryOptions: {
-        retries: 3
+        retries: 1
       },
       connectTimeout: 2000
     });

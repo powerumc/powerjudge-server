@@ -1,7 +1,7 @@
 import {Injectable} from "@nestjs/common";
 import {ApplicationLoggerService} from "../logging";
 import mongoose = require('mongoose');
-import {Mongoose} from "mongoose";
+import {ConnectionOptions, Mongoose} from "mongoose";
 
 export interface IMongoOption {
   uri: string;
@@ -17,14 +17,18 @@ export class MongoService {
   }
 
   async connect(option: IMongoOption) {
-    try {
-      this.client = await mongoose.connect(option.uri, {
+    let mongooseOption: ConnectionOptions = {
+      useNewUrlParser: true
+    };
+
+    if (option.user || option.password) {
+      mongooseOption.auth = {
         user: option.user,
-        pass: option.password
-      });
-    } catch(e) {
-      this.logger.error(e);
+        password: option.password
+      };
     }
+
+    this.client = await mongoose.connect(option.uri, mongooseOption);
   }
 
   async close() {

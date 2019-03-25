@@ -12,7 +12,7 @@
       "port": 6379
     },
     "mongo": {
-      "uri": "mongodb://localhost/pj",
+      "uri": "mongodb://localhost:27017/pj",
       "user": "pjadmin",
       "password": "pjadmin"
     }

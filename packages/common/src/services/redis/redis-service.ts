@@ -15,16 +15,18 @@ export class RedisService {
   }
 
   async connect(option: IRedisOption) {
-    this.client = new Redis({
-      host: option.host,
-      port: option.port,
-      connectTimeout: 2000
-    });
-
     try {
+      this.client = new Redis({
+        host: option.host,
+        port: option.port,
+        connectTimeout: 2000
+      });
+
       await this.client.connect();
     } catch(e) {
-      this.logger.error(e);
+      if (e.message === "Redis is already connecting/connected") return;
+
+      throw e;
     }
   }
 

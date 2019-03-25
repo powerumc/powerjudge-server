@@ -76,7 +76,9 @@ export class ApplicationBootstrapperService {
     const mongoOption = <IMongoOption>this.config.value.servers.mongo;
     await this.checkMongoConnectable(mongoOption, result);
 
-    result.result = result.detail.broker.connectable
+    result.result = result.detail.docker.installed
+      && result.detail.docker.connectable
+      && result.detail.broker.connectable
       && result.detail.redis.connectable
       && result.detail.mongo.connectable;
 
