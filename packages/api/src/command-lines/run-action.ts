@@ -45,7 +45,7 @@ export class RunAction extends CommandLineAction {
     await this.run();
   }
 
-  private async run(): Promise<void> {
+  private async run() {
     const result = await this.check();
     if (!result) {
       this.logger.error("The program can not be executed.");
@@ -53,10 +53,15 @@ export class RunAction extends CommandLineAction {
     }
 
     this.logger.info(`Running server: ${this.port.value} port.`);
-    await this.application.run(<number>this.port.value);
+
+    try {
+      await this.application.run(<number>this.port.value);
+    } catch(e) {
+      await this.application.close();
+    }
   }
 
-  private async check(): Promise<boolean> {
+  private async check() {
     this.logger.info("Detecting requirements.");
 
     const result = await this.bootstrapper.check();

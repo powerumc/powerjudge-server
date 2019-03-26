@@ -14,7 +14,7 @@ export class CodeController {
 
   @Post("run")
   async run(@Body() request: IFilesRequest) {
-    this.logger.debug(JSON.stringify(request));
+    this.logger.info(JSON.stringify(request));
 
     let model = new CodesModel({
       uid: Guid.create().toString(),
@@ -26,8 +26,12 @@ export class CodeController {
       id: result._id.toString()
     };
 
-    await this.redis.set(message.id, request);
-    await this.producer.send(message);
+    await Promise.all([
+      this.redis.set(message.id, request),
+      this.producer.send(message)
+    ]);
+
+    this.logger.info(await this.redis.subscribe(message.id));
 
     return result;
   }

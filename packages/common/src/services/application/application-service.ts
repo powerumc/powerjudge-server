@@ -20,4 +20,8 @@ export class ApplicationService {
     await this.app.listenAsync(port);
   }
 
+  async close() {
+    await this.app.close();
+  }
+
 }

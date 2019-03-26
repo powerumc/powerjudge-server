@@ -2,7 +2,6 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from "./app-module";
 import {PowerjudgeApiServer, RunAction} from "./command-lines";
 import {ApplicationService} from "powerjudge-common";
-import {ApplicationLoggerService} from "powerjudge-common";
 
 export async function runMain() {
   try {

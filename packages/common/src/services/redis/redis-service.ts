@@ -37,6 +37,7 @@ export class RedisService {
           return reject(error);
         }
 
+        this.logger.info(`redis-service: set key:${key}, value: ${JSON.stringify(value)}`);
         resolve(res);
       });
     });
@@ -50,6 +51,19 @@ export class RedisService {
         }
 
         resolve(JSON.parse(res || ""));
+      });
+    });
+  }
+
+  subscribe(key: string): Promise<any> {
+    return new Promise<any>((resolve) => {
+      this.client.subscribe(key);
+      this.client.on("message", (channel, message) => {
+        this.logger.info(`ioredis: ${channel}, ${message}`);
+        if (key === channel) {
+          this.client.unsubscribe(key);
+          resolve(JSON.parse(message));
+        }
       });
     });
   }
