@@ -30,6 +30,30 @@ export class RedisService {
     }
   }
 
+  set(key: string, value: any): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.client.set(key, JSON.stringify(value), (error, res) => {
+        if (error) {
+          return reject(error);
+        }
+
+        resolve(res);
+      });
+    });
+  }
+
+  get(key: string): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.client.get(key, (error, res) => {
+        if (error) {
+          return reject(error);
+        }
+
+        resolve(JSON.parse(res || ""));
+      });
+    });
+  }
+
   async close() {
     if (!this.client) return;
 

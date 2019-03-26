@@ -1,31 +1,35 @@
 import {Body, Controller, Post} from "@nestjs/common";
-import {ApplicationLoggerService, MongoService, IFilesRequest, CodesModel} from "powerjudge-common";
+import {ApplicationLoggerService, MongoService, BrokerProducerService, RedisService, IFilesRequest, CodesModel, IBrokerMessage} from "powerjudge-common";
 import {Guid} from "guid-typescript";
 
 @Controller("/api/code")
 export class CodeController {
 
   constructor(private logger: ApplicationLoggerService,
-              private mongo: MongoService) {
+              private mongo: MongoService,
+              private producer: BrokerProducerService,
+              private redis: RedisService) {
 
   }
 
   @Post("run")
   async run(@Body() request: IFilesRequest) {
-    try {
-      this.logger.debug(JSON.stringify(request));
+    this.logger.debug(JSON.stringify(request));
 
-      let model = new CodesModel({
-        uid: Guid.create().toString(),
-        language: request.language,
-        files: request.files
-      });
-      const result = await model.save();
+    let model = new CodesModel({
+      uid: Guid.create().toString(),
+      language: request.language,
+      files: request.files
+    });
+    const result = await model.save();
+    const message: IBrokerMessage = {
+      id: result._id.toString()
+    };
 
-      return result;
-    } catch(e) {
-      this.logger.error(e);
-    }
+    await this.redis.set(message.id, request);
+    await this.producer.send(message);
+
+    return result;
   }
 
 }

@@ -3,11 +3,7 @@ import {KafkaClient, Producer} from "kafka-node";
 import {IDisposable} from "../../interfaces";
 import {NumberUtils} from "../../utils";
 import {ApplicationLoggerService} from "../logging";
-
-export interface IProducerMessage {
-  id: string;
-  value: object;
-}
+import {IBrokerMessage} from "./interfaces";
 
 export interface IBrokerOption {
   hosts: string;
@@ -34,7 +30,11 @@ export class BrokerProducerService implements IDisposable {
 
   }
 
-  connect(option: IBrokerOption): Promise<void> {
+  async connect(option: IBrokerOption): Promise<void> {
+    if (this.client) {
+      return Promise.resolve();
+    }
+
     this.option = option;
 
     this.client = new KafkaClient({
@@ -53,13 +53,14 @@ export class BrokerProducerService implements IDisposable {
       this.client.on("brokersChanged", () => {
         this.logger.info("brokersChanged");
       });
-      this.client.on("ready", () => {
+      this.client.on("ready", async () => {
         this.logger.info("ready");
 
         this.producer = new Producer(this.client, {
           requireAcks: 1,
           ackTimeoutMs: 100
         });
+
         resolve();
       });
       this.client.on("zkReconnect", () => {
@@ -117,7 +118,7 @@ export class BrokerProducerService implements IDisposable {
     });
   }
 
-  send(message: IProducerMessage): Promise<void> {
+  send(message: IBrokerMessage): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.producer.send([{
         topic: this.option.topic.name,
@@ -135,12 +136,35 @@ export class BrokerProducerService implements IDisposable {
   }
 
   dispose(): Promise<void> {
-    return new Promise<void>(resolve => {
+    return new Promise<void>(async resolve => {
       if (this.client) {
         this.client.removeAllListeners();
-        this.client.close(() => {
+        await this.close();
+        resolve();
+      }
+    });
+  }
+
+  close(): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.producer.close(() => {
+        this.client.close(() => resolve());
+      });
+    });
+  }
+
+  private refreshMetadata(topicName: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (this.client) {
+        this.client.refreshMetadata([topicName], (error) => {
+          if (error) {
+            return reject(error);
+          }
+
           resolve();
-        });
+        })
+      } else {
+        reject(new Error("client is undefined"));
       }
     });
   }

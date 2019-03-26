@@ -69,6 +69,12 @@ export class ApplicationBootstrapperService {
       && result.detail.redis.connectable
       && result.detail.mongo.connectable;
 
+    if (result.result) {
+      await this.producer.connect(brokerOption);
+      await this.redis.connect(redisOption);
+      await this.mongo.connect(mongoOption);
+    }
+
     return result;
   }
 
@@ -109,6 +115,7 @@ export class ApplicationBootstrapperService {
     try {
       await this.mongo.connect(mongoOption);
       result.detail.mongo.connectable = true;
+      await this.mongo.close();
     } catch (e) {
       this.logger.error(e);
     }
