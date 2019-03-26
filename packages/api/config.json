@@ -4,7 +4,8 @@
     "broker": {
       "hosts": "localhost:9092",
       "topic": {
-        "name": "powerjudge"
+        "name": "powerjudge",
+        "partitions": 10
       }
     },
     "redis": {
