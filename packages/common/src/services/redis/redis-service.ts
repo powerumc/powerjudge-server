@@ -37,7 +37,7 @@ export class RedisService {
           return reject(error);
         }
 
-        this.logger.info(`redis-service: set key:${key}, value: ${JSON.stringify(value)}`);
+        this.logger.info(`redis-service: set key=${key}, value=${JSON.stringify(value)}, res=${JSON.stringify(res)}`);
         resolve(res);
       });
     });
