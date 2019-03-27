@@ -82,6 +82,11 @@ export class ApplicationBootstrapperService {
       && result.detail.redis.connectable
       && result.detail.mongo.connectable;
 
+    if (result.result) {
+      await this.mongo.connect(mongoOption);
+      await this.redis.connect(redisOption);
+    }
+
     return result;
   }
 

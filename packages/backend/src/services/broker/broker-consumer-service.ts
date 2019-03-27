@@ -3,6 +3,7 @@ import * as fs from "fs";
 import {Sema} from "async-sema";
 import {ConsumerGroupStream, KafkaClient} from "kafka-node";
 import {ApplicationLoggerService, IBrokerOption, IDisposable, FsUtils} from "powerjudge-common";
+import {JudgeService} from "../judger";
 
 @Injectable()
 export class BrokerConsumerService implements IDisposable {
@@ -12,7 +13,8 @@ export class BrokerConsumerService implements IDisposable {
   private consumer: ConsumerGroupStream;
   private semaphore: Sema;
 
-  constructor(private logger: ApplicationLoggerService) {
+  constructor(private logger: ApplicationLoggerService,
+              private judge: JudgeService) {
     this.semaphore = new Sema(1);
   }
 
@@ -32,16 +34,16 @@ export class BrokerConsumerService implements IDisposable {
           this.logger.error(error);
         });
         this.consumer.on("close", () => {
-          this.logger.info("close");
+          this.logger.info("broker close");
         });
         this.consumer.on("readable", () => {
-          this.logger.info("readable");
+          this.logger.info("broker readable");
         });
         this.consumer.on("end", () => {
-          this.logger.info("end");
+          this.logger.info("broker end");
         });
-        this.consumer.on("data", chunk => {
-          this.logger.debug(`data=${JSON.stringify(chunk)}`);
+        this.consumer.on("data", async (chunk) => {
+          await this.onData(chunk);
         });
 
         this.client = this.consumer.client;
@@ -57,10 +59,6 @@ export class BrokerConsumerService implements IDisposable {
     });
   }
 
-  private async prepare(path: fs.PathLike) {
-    await FsUtils.mkdir(this.option.consumer.data.path);
-  }
-
   dispose(): Promise<void> {
     return new Promise<void>(resolve => {
       this.client.removeAllListeners();
@@ -69,6 +67,16 @@ export class BrokerConsumerService implements IDisposable {
         resolve();
       });
     });
+  }
+
+  private async prepare(path: fs.PathLike) {
+    await FsUtils.mkdir(path);
+  }
+
+  private async onData(chunk: any) {
+    if (chunk && chunk.value) {
+      await this.judge.process(chunk.value);
+    }
   }
 
 }

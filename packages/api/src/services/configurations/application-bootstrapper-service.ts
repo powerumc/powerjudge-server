@@ -82,6 +82,7 @@ export class ApplicationBootstrapperService {
     try {
       await this.producer.connect(option);
       result.detail.broker.connectable = true;
+      await this.producer.close();
     } catch (e) {
       this.logger.error(e);
     }

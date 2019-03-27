@@ -17,6 +17,10 @@ export class ApplicationService {
   }
 
   async run(port: number | string) {
+    process.on("SIGINT", async () => {
+      await this.close();
+    });
+
     await this.app.listenAsync(port);
   }
 

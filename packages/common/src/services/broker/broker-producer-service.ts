@@ -25,6 +25,7 @@ export class BrokerProducerService implements IDisposable {
   private option: IBrokerOption;
   private client: KafkaClient;
   private producer: Producer;
+  private isReady: boolean;
 
   constructor(private logger: ApplicationLoggerService) {
 
@@ -38,7 +39,7 @@ export class BrokerProducerService implements IDisposable {
     this.option = option;
 
     this.client = new KafkaClient({
-      autoConnect: false,
+      autoConnect: true,
       connectRetryOptions: {
         retries: 1
       },
@@ -46,15 +47,20 @@ export class BrokerProducerService implements IDisposable {
     });
 
     return new Promise<void>((resolve, reject) => {
-      this.client.connect();
+      //this.client.connect();
       this.client.on("close", () => {
-        this.logger.info("close");
+        this.logger.info("broker close");
       });
       this.client.on("brokersChanged", () => {
-        this.logger.info("brokersChanged");
+        this.logger.info("broker brokersChanged");
       });
       this.client.on("ready", async () => {
-        this.logger.info("ready");
+        this.logger.info("broker ready");
+
+        if (this.isReady)
+          resolve();
+
+        this.isReady = true;
 
         this.producer = new Producer(this.client, {
           requireAcks: 1,
@@ -64,7 +70,7 @@ export class BrokerProducerService implements IDisposable {
         resolve();
       });
       this.client.on("zkReconnect", () => {
-        this.logger.info("zkReconnect");
+        this.logger.info("broker zkReconnect");
       });
       this.client.on("socket_error", (error) => {
         this.logger.error(error);
@@ -75,7 +81,10 @@ export class BrokerProducerService implements IDisposable {
         reject(error);
       });
       this.client.on("connect", () => {
-        this.logger.info("connect");
+        this.logger.info("broker connect");
+
+        if (this.isReady)
+          resolve();
       });
     });
   }
@@ -130,6 +139,7 @@ export class BrokerProducerService implements IDisposable {
           return reject(error);
         }
 
+        this.logger.info(`broker-producer-service: message=${JSON.stringify(message)}`);
         resolve(data);
       });
     });

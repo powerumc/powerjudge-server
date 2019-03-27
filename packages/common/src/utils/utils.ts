@@ -31,4 +31,16 @@ export class FsUtils {
       }
     });
   }
+
+  static write(path: fs.PathLike, data: any): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      fs.writeFile(path, data, err => {
+        if (err) {
+          return reject(err);
+        }
+
+        resolve();
+      });
+    });
+  }
 }

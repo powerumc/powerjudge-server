@@ -50,6 +50,7 @@ export class RedisService {
           return reject(error);
         }
 
+        this.logger.info(`redis-service: get res=${res}`);
         resolve(JSON.parse(res || ""));
       });
     });
