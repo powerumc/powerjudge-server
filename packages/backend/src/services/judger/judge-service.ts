@@ -16,7 +16,9 @@ export class JudgeService {
 
   async process(message: IBrokerMessage) {
     const request = await this.pick(message);
-    await this.writeFiles(request);
+    await this.writeFiles(message, request);
+
+    await this.publish(message);
   }
 
   async pick(message: IBrokerMessage): Promise<IFilesRequest> {
@@ -24,15 +26,26 @@ export class JudgeService {
 
     const request = <IFilesRequest>await this.redis.get(message.id);
     this.logger.info(`judge-service.pick: request=${JSON.stringify(request)}`);
+    await this.redis.del(message.id);
 
     return request;
   }
 
-  private async writeFiles(request: IFilesRequest) {
-    const path = this.config.value.servers.broker.consumer.data.path;
+  private async publish(message: IBrokerMessage) {
+    await this.redis.publish(message.id, JSON.stringify({result: "OK"}));
+  }
 
-    this.logger.info(`judge-service: writeFiles path=${path}, request=${request}`);
-    await this.recursiveFiles(request.files, path);
+  private async writeFiles(message: IBrokerMessage, request: IFilesRequest) {
+    let path = this.config.value.servers.broker.consumer.data.path;
+    path = npath.join(path, message.id);
+    await FsUtils.mkdir(path);
+
+    this.logger.info(`judge-service: writeFiles path=${path}, message=${message}, request=${JSON.stringify(request)}`);
+    try {
+      await this.recursiveFiles(request.files, path);
+    } catch(e) {
+      this.logger.error(e);
+    }
 
   }
 
@@ -41,7 +54,8 @@ export class JudgeService {
       const isFile = _.isString(file.value);
 
       if (isFile) {
-        await FsUtils.write(path, file.value);
+        const filepath = npath.join(path.toString(), file.name);
+        await FsUtils.write(filepath, file.value);
       } else {
         const childPath = npath.join(path.toString(), file.name);
         await FsUtils.mkdir(childPath);

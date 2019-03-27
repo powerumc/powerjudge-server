@@ -75,7 +75,8 @@ export class BrokerConsumerService implements IDisposable {
 
   private async onData(chunk: any) {
     if (chunk && chunk.value) {
-      await this.judge.process(chunk.value);
+      this.logger.info(`broker-consumer-service.onData: chunk=${JSON.stringify(chunk)}`);
+      await this.judge.process(JSON.parse(chunk.value));
     }
   }
 

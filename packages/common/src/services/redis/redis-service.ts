@@ -20,7 +20,7 @@ export class RedisService {
 
     try {
       this.client = await this._connect(option);
-    } catch(e) {
+    } catch (e) {
       if (e.message === "Redis is already connecting/connected") return;
 
       throw e;
@@ -50,17 +50,18 @@ export class RedisService {
           return reject(error);
         }
 
-        this.logger.info(`redis-service: get res=${res}`);
+        this.logger.info(`redis-service: get key=${key}, res=${res}`);
         resolve(JSON.parse(res || ""));
       });
     });
   }
 
   subscribe(key: string): Promise<any> {
-    return new Promise<any>(async (resolve) => {
-      this.logger.info(`redis-service: subscribe key=${key}`);
+    this.logger.info(`redis-service: subscribe key=${key}`);
 
+    return new Promise<any>(async (resolve) => {
       const client = await this._connect(this.option);
+
       client.subscribe(key);
       client.on("message", (channel, message) => {
         this.logger.info(`ioredis: ${channel}, ${message}`);
@@ -76,20 +77,61 @@ export class RedisService {
     });
   }
 
+  publish(key: string, value: any): Promise<number> {
+    this.logger.info(`redis-service: publish key=${key}, value=${JSON.stringify(value)}`);
+
+    return new Promise<number>((resolve, reject) => {
+      this.client.publish(key, JSON.stringify(value), (err, res) => {
+        if (err) {
+          return reject(err);
+        }
+
+        this.logger.info(`redis-service: publish.callback res=${JSON.stringify(res)}`);
+        resolve(res);
+      });
+    });
+  }
+
+  del(key: string): Promise<number> {
+    this.logger.info(`redis-service: del key=${key}`);
+
+    return this.client.del(key);
+  }
+
   async close() {
     if (!this.client) return;
 
     this.client.disconnect();
   }
 
-  private async _connect(option: IRedisOption) {
+  private async _connect(option: IRedisOption): Promise<Redis.Redis> {
     const client = new Redis({
       host: option.host,
       port: option.port,
       connectTimeout: 2000
     });
 
-    await client.connect();
+    // client.on("connect", () => {
+    //   this.logger.info("redis connect");
+    // });
+    // client.on("ready", () => {
+    //   this.logger.info("redis ready");
+    //   resolve(client);
+    // });
+    // client.on("error", (e) => {
+    //   this.logger.info("redis error");
+    //   reject(e);
+    // });
+    // client.on("close", () => {
+    //   this.logger.info("redis close");
+    // });
+    // client.on("reconnecting", () => {
+    //   this.logger.info("redis reconnecting");
+    // });
+    // client.on("end", () => {
+    //   this.logger.info("redis end");
+    // });
+
     return client;
   }
 

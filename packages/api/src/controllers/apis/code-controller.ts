@@ -30,9 +30,10 @@ export class CodeController {
       await this.redis.set(message.id, request);
       await this.producer.send(message);
 
-      this.logger.info(await this.redis.subscribe(message.id));
+      const subscribeResult = await this.redis.subscribe(message.id);
+      this.logger.info(subscribeResult);
 
-      return result;
+      return subscribeResult;
     } catch(e) {
       this.logger.error(e);
     }
