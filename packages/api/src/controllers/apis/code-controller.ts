@@ -26,10 +26,8 @@ export class CodeController {
       id: result._id.toString()
     };
 
-    await Promise.all([
-      this.redis.set(message.id, request),
-      this.producer.send(message)
-    ]);
+    await this.redis.set(message.id, request);
+    await this.producer.send(message);
 
     this.logger.info(await this.redis.subscribe(message.id));
 
