@@ -20,10 +20,10 @@ export class JudgeService {
   }
 
   async pick(message: IBrokerMessage): Promise<IFilesRequest> {
-    this.logger.info(`judge-service: message=${JSON.stringify(message)}`);
+    this.logger.info(`judge-service.pick: message=${JSON.stringify(message)}`);
 
     const request = <IFilesRequest>await this.redis.get(message.id);
-    this.logger.info(`judge-service: request=${JSON.stringify(request)}`);
+    this.logger.info(`judge-service.pick: request=${JSON.stringify(request)}`);
 
     return request;
   }

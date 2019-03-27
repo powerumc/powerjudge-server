@@ -14,24 +14,28 @@ export class CodeController {
 
   @Post("run")
   async run(@Body() request: IFilesRequest) {
-    this.logger.info(JSON.stringify(request));
+    try {
+      this.logger.info(`code-controller.run: request=${JSON.stringify(request)}`);
 
-    let model = new CodesModel({
-      uid: Guid.create().toString(),
-      language: request.language,
-      files: request.files
-    });
-    const result = await model.save();
-    const message: IBrokerMessage = {
-      id: result._id.toString()
-    };
+      let model = new CodesModel({
+        uid: Guid.create().toString(),
+        language: request.language,
+        files: request.files
+      });
+      const result = await model.save();
+      const message: IBrokerMessage = {
+        id: result._id.toString()
+      };
 
-    await this.redis.set(message.id, request);
-    await this.producer.send(message);
+      await this.redis.set(message.id, request);
+      await this.producer.send(message);
 
-    this.logger.info(await this.redis.subscribe(message.id));
+      this.logger.info(await this.redis.subscribe(message.id));
 
-    return result;
+      return result;
+    } catch(e) {
+      this.logger.error(e);
+    }
   }
 
 }
