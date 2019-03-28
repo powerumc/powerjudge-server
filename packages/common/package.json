@@ -23,13 +23,15 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.2.2",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "3.8.0"
+    "winston-daily-rotate-file": "3.8.0",
+    "rimraf": "^2.6.3"
   },
   "devDependencies": {
     "@types/node": "^10.12.24",
     "@types/gulp": "^4.0.6",
     "@types/ioredis": "^4.0.10",
     "@types/mongoose": "^5.3.23",
+    "@types/rimraf": "^2.0.2",
     "nodemon": "^1.18.9",
     "npm-run-all": "^4.1.5",
     "rimraf": "^2.6.3",

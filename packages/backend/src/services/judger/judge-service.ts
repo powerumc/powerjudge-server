@@ -15,10 +15,14 @@ export class JudgeService {
   }
 
   async process(message: IBrokerMessage) {
-    const request = await this.pick(message);
-    await this.writeFiles(message, request);
+    try {
+      const request = await this.pick(message);
+      await this.writeFiles(message, request);
 
-    await this.publish(message);
+      await this.publish(message);
+    } finally {
+      this.removeFiles(message);
+    }
   }
 
   async pick(message: IBrokerMessage): Promise<IFilesRequest> {
@@ -35,9 +39,22 @@ export class JudgeService {
     await this.redis.publish(message.id, JSON.stringify({result: "OK"}));
   }
 
-  private async writeFiles(message: IBrokerMessage, request: IFilesRequest) {
+  private getPrivilageRoot(message: IBrokerMessage) {
     let path = this.config.value.servers.broker.consumer.data.path;
     path = npath.join(path, message.id);
+
+    return path;
+  }
+
+  private removeFiles(message: IBrokerMessage) {
+    const path = this.getPrivilageRoot(message);
+
+    this.logger.info(`judge-service: removeFiles message:${message}, path=${path}`);
+    FsUtils.rmdir(path);
+  }
+
+  private async writeFiles(message: IBrokerMessage, request: IFilesRequest) {
+    const path = this.getPrivilageRoot(message);
     await FsUtils.mkdir(path);
 
     this.logger.info(`judge-service: writeFiles path=${path}, message=${message}, request=${JSON.stringify(request)}`);

@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import rimraf = require("rimraf");
 
 export class NumberUtils {
   static random(min: number, max: number): number {
@@ -29,6 +30,17 @@ export class FsUtils {
       } catch(e) {
         reject(e);
       }
+    });
+  }
+
+  static rmdir(path: fs.PathLike): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      rimraf(path.toString(),error => {
+        if (error)
+          return reject(error);
+
+        resolve();
+      });
     });
   }
 
