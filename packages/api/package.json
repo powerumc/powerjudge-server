@@ -14,7 +14,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm-run-all clean build server",
-    "start:dev": "npm-run-all clean gulp:copy-files && ts-nodemon --exec \"node dist/main.js run\" ",
+    "start:dev": "npm-run-all clean gulp:copy-files && tsc-watch --onSuccess \"node dist/main.js run\" ",
     "clean": "rimraf dist",
     "build": "tsc",
     "gulp:copy-files": "node_modules/.bin/gulp copy-files",
@@ -65,7 +65,7 @@
     "typescript": "^3.3.3",
     "ts-node": "^8.0.3",
     "gulp": "^4.0.0",
-    "@trongnd/ts-nodemon": "^1.0.3"
+    "tsc-watch": "^2.1.2"
   },
   "peerDependencies": {
     "powerjudge-common": "latest"
