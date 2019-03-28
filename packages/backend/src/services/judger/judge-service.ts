@@ -30,6 +30,9 @@ export class JudgeService {
 
     const request = <IFilesRequest>await this.redis.get(message.id);
     this.logger.info(`judge-service.pick: request=${JSON.stringify(request)}`);
+    if (request === null)
+      throw new Error("request == null");
+
     await this.redis.del(message.id);
 
     return request;
