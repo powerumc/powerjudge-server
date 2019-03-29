@@ -21,7 +21,7 @@ export class JudgeService {
 
       await this.publish(message);
     } finally {
-      this.removeFiles(message);
+      // await this.removeFiles(message);
     }
   }
 
@@ -42,25 +42,25 @@ export class JudgeService {
     await this.redis.publish(message.id, JSON.stringify({result: "OK"}));
   }
 
-  private getPrivilageRoot(message: IBrokerMessage) {
+  private getPrivilegeRoot(message: IBrokerMessage) {
     let path = this.config.value.servers.broker.consumer.data.path;
     path = npath.join(path, message.id);
 
     return path;
   }
 
-  private removeFiles(message: IBrokerMessage) {
-    const path = this.getPrivilageRoot(message);
+  private async removeFiles(message: IBrokerMessage) {
+    const path = this.getPrivilegeRoot(message);
 
-    this.logger.info(`judge-service: removeFiles message:${message}, path=${path}`);
-    FsUtils.rmdir(path);
+    this.logger.info(`judge-service: removeFiles message:${JSON.stringify(message)}, path=${path}`);
+    await FsUtils.rmdir(path);
   }
 
   private async writeFiles(message: IBrokerMessage, request: IFilesRequest) {
-    const path = this.getPrivilageRoot(message);
+    const path = this.getPrivilegeRoot(message);
     await FsUtils.mkdir(path);
 
-    this.logger.info(`judge-service: writeFiles path=${path}, message=${message}, request=${JSON.stringify(request)}`);
+    this.logger.info(`judge-service: writeFiles path=${path}, message=${JSON.stringify(message)}, request=${JSON.stringify(request)}`);
     try {
       await this.recursiveFiles(request.files, path);
     } catch(e) {
@@ -71,16 +71,20 @@ export class JudgeService {
 
   private async recursiveFiles(files: IFile[], path: fs.PathLike) {
     for(const file of files) {
-      const isFile = _.isString(file.value);
+      try {
+        const isFile = _.isString(file.value);
 
-      if (isFile) {
-        const filepath = npath.join(path.toString(), file.name);
-        await FsUtils.write(filepath, file.value);
-      } else {
-        const childPath = npath.join(path.toString(), file.name);
-        await FsUtils.mkdir(childPath);
+        if (isFile) {
+          const filepath = npath.join(path.toString(), file.name);
+          await FsUtils.write(filepath, file.value);
+        } else {
+          const childPath = npath.join(path.toString(), file.name);
+          await FsUtils.mkdir(childPath);
 
-        await this.recursiveFiles(<IFile[]>file.value, childPath);
+          await this.recursiveFiles(<IFile[]>file.value, childPath);
+        }
+      } catch(e) {
+        console.error(e);
       }
     }
   }

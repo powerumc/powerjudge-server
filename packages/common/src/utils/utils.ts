@@ -10,26 +10,21 @@ export class NumberUtils {
 
 export class FsUtils {
   static mkdir(path: fs.PathLike): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      try {
-        const exists = fs.existsSync(path);
-        if (!exists) {
-          fs.mkdir(path, {
-            recursive: true
-          }, error => {
-            if (error) {
-              reject(error);
-              return;
-            }
+    return new Promise<void>(async (resolve, reject) => {
+      const exists = fs.existsSync(path);
+      if (!exists) {
+        fs.mkdir(path, {
+          recursive: true
+        }, error => {
+          if (error) {
+            return reject(error);
+          }
 
-            resolve();
-          });
-        }
-
-        resolve();
-      } catch(e) {
-        reject(e);
+          return resolve();
+        });
       }
+
+      resolve();
     });
   }
 

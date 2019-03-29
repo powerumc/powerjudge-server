@@ -102,6 +102,7 @@ export class RedisService {
     if (!this.client) return;
 
     this.client.disconnect();
+    return Promise.resolve();
   }
 
   private async _connect(option: IRedisOption): Promise<Redis.Redis> {

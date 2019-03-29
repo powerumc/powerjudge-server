@@ -70,12 +70,23 @@ export class ApplicationBootstrapperService {
       && result.detail.mongo.connectable;
 
     if (!result.result) {
-      await this.producer.close();
-      await this.redis.close();
-      await this.mongo.close();
+      await this.close();
+    } else {
+      process.on("exit", async code => {
+        await this.close();
+      });
+      process.on("SIGINT", async () => {
+        await this.close();
+      });
     }
 
     return result;
+  }
+
+  async close() {
+    await this.producer.close();
+    await this.redis.close();
+    await this.mongo.close();
   }
 
   private async checkBrokerConnectable(option: IBrokerOption, result: IBootstrapperResult) {

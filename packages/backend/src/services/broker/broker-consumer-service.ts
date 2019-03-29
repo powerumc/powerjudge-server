@@ -60,12 +60,19 @@ export class BrokerConsumerService implements IDisposable {
   }
 
   dispose(): Promise<void> {
-    return new Promise<void>(resolve => {
+    return new Promise<void>(async resolve => {
       this.client.removeAllListeners();
+      this.consumer.removeAllListeners();
+      resolve();
+    });
+  }
+
+  close(): Promise<void> {
+    return new Promise<void>(async resolve => {
+      await this.dispose();
       this.consumer.close(() => {
-        this.consumer.removeAllListeners();
         resolve();
-      });
+      })
     });
   }
 

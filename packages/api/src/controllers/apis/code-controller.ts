@@ -28,9 +28,10 @@ export class CodeController {
       };
 
       await this.redis.set(message.id, request);
+      const subscribePromise = this.redis.subscribe(message.id);
       await this.producer.send(message);
 
-      const subscribeResult = await this.redis.subscribe(message.id);
+      const subscribeResult = await subscribePromise;
       this.logger.info(subscribeResult);
 
       return subscribeResult;

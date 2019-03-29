@@ -83,11 +83,23 @@ export class ApplicationBootstrapperService {
       && result.detail.mongo.connectable;
 
     if (!result.result) {
-      await this.mongo.close();
-      await this.redis.close();
+      await this.close();
+    } else {
+      process.on("exit", async code => {
+        await this.close();
+      });
+      process.on("SIGINT", async () => {
+        await this.close();
+      });
     }
 
     return result;
+  }
+
+  async close() {
+    await this.consumer.close();
+    await this.mongo.close();
+    await this.redis.close();
   }
 
   private async checkDockerInstalled(result: IBootstrapperResult) {
