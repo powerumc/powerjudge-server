@@ -21,7 +21,7 @@ export class JudgeService {
 
       await this.publish(message);
     } finally {
-      // await this.removeFiles(message);
+      await this.removeFiles(message);
     }
   }
 

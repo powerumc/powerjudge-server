@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import {promisify} from "util";
 import rimraf = require("rimraf");
 
 export class NumberUtils {
@@ -7,25 +8,13 @@ export class NumberUtils {
   }
 }
 
+const mkdirAsync = promisify(fs.mkdir);
 
 export class FsUtils {
   static mkdir(path: fs.PathLike): Promise<void> {
-    return new Promise<void>(async (resolve, reject) => {
-      const exists = fs.existsSync(path);
-      if (!exists) {
-        fs.mkdir(path, {
-          recursive: true
-        }, error => {
-          if (error) {
-            return reject(error);
-          }
+    if (fs.existsSync(path)) return Promise.resolve();
 
-          return resolve();
-        });
-      }
-
-      resolve();
-    });
+    return mkdirAsync(path);
   }
 
   static rmdir(path: fs.PathLike): Promise<void> {
