@@ -29,4 +29,59 @@ export class DockerService {
       });
     });
   }
+
+  async create(name: string, image: string, bindHostPath: string, bindContainerPath): Promise<Dockerode.Container> {
+    const option: Dockerode.ContainerCreateOptions = {
+      name: name,
+      Image: image,
+      AttachStderr: true,
+      AttachStdin: true,
+      AttachStdout: true,
+      Tty: true,
+      OpenStdin: true,
+      StdinOnce: false,
+      Cmd: ["/bin/bash"],
+      HostConfig: {
+        Binds: [`${bindHostPath}:${bindContainerPath}`],
+        Dns: ['8.8.8.8', '8.8.4.4'],
+        CpuPeriod: 100000,
+        CpuQuota: 10000
+      }
+    };
+
+    this.logger.info(`docker-service: create option=${JSON.stringify(option)}`);
+
+    try {
+      return await this.docker.createContainer(option);
+    } catch(e) {
+      this.logger.error(e);
+      throw e;
+    }
+  }
+
+  async start(container: Dockerode.Container) {
+    try {
+      await container.start()
+    } catch(e) {
+      this.logger.error(e);
+      throw e;
+    }
+  }
+
+  async attach(container: Dockerode.Container): Promise<NodeJS.ReadWriteStream> {
+    try {
+      return await container.attach({
+        stream: true,
+        stdin: true,
+        stdout: true,
+        stderr: true,
+        hijack: true
+      });
+
+    } catch(e) {
+      this.logger.error(e);
+      throw e;
+    }
+  }
+
 }
