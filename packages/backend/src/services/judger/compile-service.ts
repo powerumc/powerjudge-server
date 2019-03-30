@@ -1,11 +1,14 @@
 import * as fs from "fs";
 import * as _ from "lodash";
 import * as npath from "path";
+import * as child from "child_process";
 import {Injectable} from "@nestjs/common";
-import {ApplicationLoggerService, IFilesRequest, FsUtils, IBrokerMessage, IFile} from "powerjudge-common";
+import {ApplicationLoggerService, IFilesRequest, FsUtils, IBrokerMessage, IFile, StopWatch} from "powerjudge-common";
 import {DockerService} from "../docker";
 import {ApplicationConfigurationService} from "../configurations";
 import {CompileMappingService} from "./compile-mapping-service";
+import MemoryStream = require("memorystream");
+import * as Dockerode from "dockerode";
 
 @Injectable()
 export class CompileService {
@@ -14,7 +17,6 @@ export class CompileService {
               private docker: DockerService,
               private config: ApplicationConfigurationService,
               private compileMapping: CompileMappingService) {
-
   }
 
   async compile(message: IBrokerMessage, request: IFilesRequest) {
@@ -27,18 +29,55 @@ export class CompileService {
       const mapping = this.compileMapping.get(request.language);
       const container = await this.docker.create(message.id, mapping.image, path, "/pj");
       await this.docker.start(container);
-      const stream = await container.attach(container);
-      container.modem.demuxStream(stream, process.stdout, process.stderr);
+      await this._compileByChildProcess(container);
 
-      stream.on("data", (data) => { this.logger.info(data); });
-      stream.on("error", () => { this.logger.error("error"); });
-      stream.on("end", () => { this.logger.info("end"); });
-      stream.write("ls -al\n");
-
-      await container.wait();
 
     } finally {
       // await this.removeFiles(message);
+    }
+  }
+
+  private async _compile(container: Dockerode.Container) {
+    const stopwatch = new StopWatch().start();
+
+    this.logger.info(`compile-service: _compile container=${container.id}`);
+
+    const attachStream = await this.docker.attach(container);
+    const ms = new MemoryStream();
+    attachStream.pipe(ms);
+
+    // container.modem.demuxStream(ms, process.stdout, process.stderr);
+
+    // attachStream.on("data", (data) => {
+    //   ms.write(data);
+    // });
+    // attachStream.on("error", (error) => {
+    //   ms.write(error);
+    // });
+    attachStream.on("end", () => {
+      this.logger.info("end");
+      ms.end();
+    });
+
+    await container.wait();
+    stopwatch.end();
+    this.logger.info(`compile-service: _compile end container=${container.id}, elapsed=${stopwatch.elapsed}`);
+  }
+
+  private async _compileByChildProcess(container: Dockerode.Container) {
+    const stopwatch = StopWatch.start();
+    this.logger.info(`compile-service: _compile container=${container.id}`);
+
+    try {
+      const cmd = `docker exec ${container.id} ls -al /`;
+      const proc = child.exec(cmd, (error, stdout, stderr) => {
+        this.logger.info(`compile-service: _compileByChildProcess error=${error}`);
+        this.logger.info(`compile-service: _compileByChildProcess stdout=${stdout}`);
+        this.logger.info(`compile-service: _compileByChildProcess stderr=${stderr}`);
+
+        this.logger.info(`compile-service: _compileByChildProcess end container=${container.id}, elapsed=${stopwatch.end().elapsed}`);
+      });
+    } finally {
     }
   }
 

@@ -40,3 +40,26 @@ export class FsUtils {
     });
   }
 }
+
+export class StopWatch {
+  private starttime: [number, number];
+  private endtime: [number, number];
+
+  start(): this {
+    this.starttime = process.hrtime();
+    return this;
+  }
+
+  static start() {
+    return new StopWatch().start();
+  }
+
+  end(): this {
+    this.endtime = process.hrtime(this.starttime);
+    return this;
+  }
+
+  get elapsed() {
+    return this.endtime[0] * 1e3 + this.endtime[1] / 1e6;
+  }
+}
