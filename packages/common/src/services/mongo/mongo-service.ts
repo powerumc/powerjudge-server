@@ -19,13 +19,11 @@ export class MongoService {
 
   async connect(option: IMongoOption) {
     let mongooseOption: ConnectionOptions = {
-      useNewUrlParser: true
+      useNewUrlParser: true,
+      connectTimeoutMS: 3000,
+      user: option.user,
+      pass: option.password
     };
-
-    mongooseOption.auth = {};
-    mongooseOption.auth.user = option.user || undefined;
-    mongooseOption.auth.password = option.password || undefined;
-    mongooseOption.dbName = option.db || undefined;
 
     this.client = await mongoose.connect(option.uri, mongooseOption);
   }

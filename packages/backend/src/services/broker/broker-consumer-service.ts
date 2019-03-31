@@ -27,7 +27,7 @@ export class BrokerConsumerService implements IDisposable {
           encoding: "utf8",
           groupId: option.topic.name + "-group",
           maxTickMessages: 1,
-          protocol: ["roundrobin"],
+          protocol: ["roundrobin"]
         }, option.topic.name);
 
         this.consumer.on("error", (error) => {
@@ -61,8 +61,14 @@ export class BrokerConsumerService implements IDisposable {
 
   dispose(): Promise<void> {
     return new Promise<void>(async resolve => {
-      this.client.removeAllListeners();
-      this.consumer.removeAllListeners();
+      if (this.client) {
+        this.client.removeAllListeners();
+      }
+
+      if (this.consumer) {
+        this.consumer.removeAllListeners();
+      }
+
       resolve();
     });
   }

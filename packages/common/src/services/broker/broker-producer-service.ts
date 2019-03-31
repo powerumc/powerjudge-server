@@ -43,7 +43,7 @@ export class BrokerProducerService implements IDisposable {
       connectRetryOptions: {
         retries: 1
       },
-      connectTimeout: 2000
+      connectTimeout: 3000
     });
 
     return new Promise<void>((resolve, reject) => {
