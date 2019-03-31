@@ -42,6 +42,7 @@ export class DockerService {
       Tty: true,
       OpenStdin: true,
       StdinOnce: false,
+      WorkingDir: bindContainerPath,
       Cmd: ["/bin/bash"],
       HostConfig: {
         Binds: [
@@ -111,6 +112,19 @@ export class DockerService {
       throw e;
     } finally {
       this.logger.info(`docker-service: exec container=${container.id}, elapsed=${stopwatch.end().elapsed}`);
+    }
+  }
+
+  async remove(container: Dockerode.Container): Promise<void> {
+    const stopwatch = StopWatch.start();
+    try {
+      await container.remove({
+        force: true
+      });
+    } catch(e) {
+      this.logger.error(e);
+    } finally {
+      this.logger.info(`docker-service: remove container=${container.id}, elapsed=${stopwatch.end().elapsed}`);
     }
   }
 

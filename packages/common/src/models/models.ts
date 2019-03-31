@@ -10,6 +10,15 @@ export interface IFilesRequest {
   files: IFile[]
 }
 
+export interface IFilesResponse {
+  result: string;
+}
+
+export interface IExecuteResult {
+  stderr: string;
+  stdout: string;
+}
+
 const request: IFilesRequest = {
   language: "cs",
   files: [

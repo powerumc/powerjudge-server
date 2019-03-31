@@ -1,5 +1,5 @@
 import {Injectable} from "@nestjs/common";
-import {ApplicationLoggerService, RedisService, IBrokerMessage, IFilesRequest} from "powerjudge-common";
+import {ApplicationLoggerService, RedisService, IBrokerMessage, IFilesRequest, IExecuteResult} from "powerjudge-common";
 import {ApplicationConfigurationService} from "../configurations";
 import {CompileService} from "./compile-service";
 
@@ -13,10 +13,11 @@ export class JudgeService {
 
   }
 
-  async process(message: IBrokerMessage) {
+  async process(message: IBrokerMessage): Promise<void> {
     const request = await this.pick(message);
-    await this.compile.compile(message, request);
-    await this.publish(message);
+    const result = await this.compile.run(message, request);
+
+    await this.publish(message, result);
   }
 
   async pick(message: IBrokerMessage): Promise<IFilesRequest> {
@@ -32,8 +33,8 @@ export class JudgeService {
     return request;
   }
 
-  private async publish(message: IBrokerMessage) {
-    await this.redis.publish(message.id, JSON.stringify({result: "OK"}));
+  private async publish(message: IBrokerMessage, result: IExecuteResult) {
+    await this.redis.publish(message.id, JSON.stringify(result));
   }
 
 

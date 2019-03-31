@@ -12,8 +12,17 @@ export interface ICompilerMappingItem {
   runtime: string;
   compileOption?: any;
   runtimeOption?: any;
-  outExt: string;
+  out: ICompilerMappingOutOption;
+  joinOutputOption: (option: ICompilerMappingOutOption) => string;
 }
+
+export interface ICompilerMappingOutOption {
+  option: string;
+  filename: string;
+  ext: string;
+}
+
+const getDefaultCompileOption = (args: string[]) => args.join(" ");
 
 const mappings: ICompilerMapping = {
   "cs": {
@@ -21,9 +30,14 @@ const mappings: ICompilerMapping = {
     image: "powerjudge/powerjudge-compiler-mono:latest",
     compile: "mcs",
     runtime: "mono",
-    compileOption(args: string[]) { },
-    runtimeOption(args: string[]) { },
-    outExt: ".exe"
+    compileOption: getDefaultCompileOption,
+    runtimeOption(args: string[]) { return "pj.exe" },
+    out: {
+      option: "-out",
+      filename: "pj",
+      ext: ".exe"
+    },
+    joinOutputOption: (option: ICompilerMappingOutOption) => `${option.option}:${option.filename}${option.ext}`
   }
 };
 
