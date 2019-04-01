@@ -20,24 +20,24 @@ export class CompileService {
   }
 
   async run(message: IBrokerMessage, request: IFilesRequest): Promise<IExecuteResult> {
+    let container: Dockerode.Container | null = null;
     try {
       const mapping = this.compileMapping.get(request.language);
-
-      const container = await this.compile(message, request, mapping);
-
-      try {
-        const result = await this.execute(container, request, mapping);
-        return result;
-      } finally {
-        await this.remove(container);
+      const compileResult = await this.compile(message, request, mapping);
+      container = compileResult.container;
+      if (!compileResult.result.success) {
+        return compileResult.result;
       }
 
+      const executeResult = await this.execute(container, request, mapping);
+      return executeResult;
     } finally {
       await this.removeFiles(message);
+      await this.remove(container);
     }
   }
 
-  async compile(message: IBrokerMessage, request: IFilesRequest, mapping: ICompilerMappingItem): Promise<Dockerode.Container> {
+  async compile(message: IBrokerMessage, request: IFilesRequest, mapping: ICompilerMappingItem): Promise<{container: Dockerode.Container, result: IExecuteResult}> {
     this.logger.info(`compile-service: compile message=${JSON.stringify(message)}, request=${JSON.stringify(request)}`);
 
     try {
@@ -46,9 +46,9 @@ export class CompileService {
       const path = npath.resolve(this.getPrivilegeRoot(message));
       const container = await this.docker.create(message.id, mapping.image, path, "/pj");
       await this.docker.start(container);
-      await this._compileByChildProcess(container, request, mapping);
+      const compileResult = await this._compileByChildProcess(container, request, mapping);
 
-      return container;
+      return {container, result: compileResult};
     }
     catch(e) {
       this.logger.error(e);
@@ -85,11 +85,11 @@ export class CompileService {
     this.logger.info(`compile-service: _compile end container=${container.id}, elapsed=${stopwatch.elapsed}`);
   }
 
-  private _compileByChildProcess(container: Dockerode.Container, request: IFilesRequest, mapping: ICompilerMappingItem): Promise<void> {
+  private _compileByChildProcess(container: Dockerode.Container, request: IFilesRequest, mapping: ICompilerMappingItem): Promise<IExecuteResult> {
     const stopwatch = StopWatch.start();
     this.logger.info(`compile-service: _compile container=${container.id}`);
 
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<IExecuteResult>((resolve, reject) => {
       try {
         const filePaths = [];
         this.getFilePaths(request.files, "./", filePaths);
@@ -101,7 +101,11 @@ export class CompileService {
           this.logger.info(`compile-service: _compileByChildProcess container=${container.id}, error=${JSON.stringify({ error, stderr, stdout })}`);
           this.logger.info(`compile-service: _compileByChildProcess end container=${container.id}, elapsed=${stopwatch.end().elapsed}`);
 
-          resolve();
+          resolve({
+            stderr,
+            stdout,
+            success: !error
+          });
         });
       }
       catch(e) {
@@ -127,13 +131,10 @@ export class CompileService {
         const proc = child.exec(dockerCmd, (error, stdout, stderr) => {
           this.logger.info(`compile-service: execute child.exec container=${container.id}, error=${JSON.stringify({error, stderr, stdout})}`);
 
-          if (error) {
-            return reject(error);
-          }
-
           resolve({
             stderr,
-            stdout
+            stdout,
+            success: !error
           })
         });
       } catch(e) {
@@ -143,9 +144,11 @@ export class CompileService {
     });
   }
 
-  async remove(container: Dockerode.Container): Promise<void> {
+  async remove(container: Dockerode.Container | null): Promise<void> {
     try {
-      await this.docker.remove(container);
+      if (container) {
+        await this.docker.remove(container);
+      }
     } catch(e) {
       this.logger.error(e);
     }

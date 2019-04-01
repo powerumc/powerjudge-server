@@ -17,6 +17,7 @@ export interface IFilesResponse {
 export interface IExecuteResult {
   stderr: string;
   stdout: string;
+  success: boolean;
 }
 
 const request: IFilesRequest = {
