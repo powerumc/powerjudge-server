@@ -1,7 +1,7 @@
 import {Injectable} from "@nestjs/common";
 import * as fs from "fs";
 import {Sema} from "async-sema";
-import {ConsumerGroupStream, KafkaClient} from "kafka-node";
+import {ConsumerGroup, KafkaClient} from "kafka-node";
 import {ApplicationLoggerService, IBrokerOption, IDisposable, FsUtils} from "powerjudge-common";
 import {JudgeService} from "../judger";
 
@@ -10,7 +10,7 @@ export class BrokerConsumerService implements IDisposable {
 
   private option: IBrokerOption;
   private client: KafkaClient;
-  private consumer: ConsumerGroupStream;
+  private consumer: ConsumerGroup;
   private semaphore: Sema;
 
   constructor(private logger: ApplicationLoggerService,
@@ -21,8 +21,9 @@ export class BrokerConsumerService implements IDisposable {
   connect(option: IBrokerOption) {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        this.consumer = new ConsumerGroupStream({
+        this.consumer = new ConsumerGroup({
           kafkaHost: option.hosts,
+          connectOnReady: true,
           retries: 3,
           autoCommit: true,
           encoding: "utf8",
@@ -31,20 +32,24 @@ export class BrokerConsumerService implements IDisposable {
           protocol: ["roundrobin"]
         }, option.topic.name);
 
-        this.consumer.on("error", (error) => {
+        this.consumer.on("error", error => {
           this.logger.error(error);
         });
-        this.consumer.on("close", () => {
-          this.logger.info("broker close");
+        this.consumer.on("connect", () => {
+          this.logger.info("broker connect");
+          resolve();
         });
-        this.consumer.on("readable", () => {
-          this.logger.info("broker readable");
+        this.consumer.on("rebalanced", () => {
+          this.logger.info("broker rebalanced");
         });
-        this.consumer.on("end", () => {
-          this.logger.info("broker end");
+        this.consumer.on("rebalancing", () => {
+          this.logger.info("broker rebalancing");
         });
-        this.consumer.on("data", async (chunk) => {
-          await this.onData(chunk);
+        this.consumer.on("offsetOutOfRange", error => {
+          this.logger.error(error);
+        });
+        this.consumer.on("message", async message => {
+          await this.onMessage(message);
         });
 
         this.client = this.consumer.client;
@@ -52,7 +57,38 @@ export class BrokerConsumerService implements IDisposable {
 
         await this.prepare(this.option.consumer.data.path);
 
-        resolve();
+        // this.consumer = new ConsumerGroupStream({
+        //   kafkaHost: option.hosts,
+        //   retries: 3,
+        //   autoCommit: true,
+        //   encoding: "utf8",
+        //   groupId: option.topic.name + "-group",
+        //   maxTickMessages: 1,
+        //   protocol: ["roundrobin"]
+        // }, option.topic.name);
+        //
+        // this.consumer.on("error", (error) => {
+        //   this.logger.error(error);
+        // });
+        // this.consumer.on("close", () => {
+        //   this.logger.info("broker close");
+        // });
+        // this.consumer.on("readable", () => {
+        //   this.logger.info("broker readable");
+        // });
+        // this.consumer.on("end", () => {
+        //   this.logger.info("broker end");
+        // });
+        // this.consumer.on("data", async (chunk) => {
+        //   await this.onMessage(chunk);
+        // });
+        //
+        // this.client = this.consumer.client;
+        // this.option = option;
+        //
+        // await this.prepare(this.option.consumer.data.path);
+        //
+        // resolve();
       } catch(e) {
         this.logger.error(e);
         reject(e);
@@ -64,10 +100,6 @@ export class BrokerConsumerService implements IDisposable {
     return new Promise<void>(async resolve => {
       if (this.client) {
         this.client.removeAllListeners();
-      }
-
-      if (this.consumer) {
-        this.consumer.removeAllListeners();
       }
 
       resolve();
@@ -87,10 +119,10 @@ export class BrokerConsumerService implements IDisposable {
     await FsUtils.mkdir(path);
   }
 
-  private async onData(chunk: any) {
-    if (chunk && chunk.value) {
-      this.logger.info(`broker-consumer-service.onData: chunk=${JSON.stringify(chunk)}`);
-      await this.judge.process(JSON.parse(chunk.value));
+  private async onMessage(message: any) {
+    if (message && message.value) {
+      this.logger.info(`broker-consumer-service.onData: chunk=${JSON.stringify(message)}`);
+      await this.judge.process(JSON.parse(message.value));
     }
   }
 
