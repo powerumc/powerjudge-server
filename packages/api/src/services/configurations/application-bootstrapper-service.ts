@@ -92,6 +92,7 @@ export class ApplicationBootstrapperService {
   private async checkBrokerConnectable(option: IBrokerOption, result: IBootstrapperResult) {
     try {
       await this.producer.connect(option);
+      await this.producer.refreshMetadata(option.topic.name);
       result.detail.broker.connectable = true;
     } catch (e) {
       this.logger.error(e);

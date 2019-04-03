@@ -41,7 +41,7 @@ export class BrokerProducerService implements IDisposable {
     this.client = new KafkaClient({
       autoConnect: true,
       connectRetryOptions: {
-        retries: 1
+        retries: 3
       },
       connectTimeout: 3000
     });
@@ -163,7 +163,7 @@ export class BrokerProducerService implements IDisposable {
     });
   }
 
-  private refreshMetadata(topicName: string): Promise<void> {
+  refreshMetadata(topicName: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (this.client) {
         this.client.refreshMetadata([topicName], (error) => {

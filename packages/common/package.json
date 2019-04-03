@@ -12,10 +12,10 @@
   "author": "powerumc",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@nestjs/common": "^6.0.2",
-    "@nestjs/core": "^6.0.2",
+    "@nestjs/common": "^6.0.5",
+    "@nestjs/core": "^6.0.5",
+    "@nestjs/platform-express": "^6.0.5",
     "@nestjs/mongoose": "^6.0.0",
-    "@nestjs/platform-express": "^6.0.2",
     "guid-typescript": "^1.0.9",
     "ioredis": "^4.6.2",
     "kafka-node": "^4.0.2",

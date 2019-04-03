@@ -23,6 +23,7 @@ export class BrokerConsumerService implements IDisposable {
       try {
         this.consumer = new ConsumerGroupStream({
           kafkaHost: option.hosts,
+          retries: 3,
           autoCommit: true,
           encoding: "utf8",
           groupId: option.topic.name + "-group",
