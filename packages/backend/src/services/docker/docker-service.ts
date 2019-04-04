@@ -49,6 +49,8 @@ export class DockerService {
           `${bindHostPath}:${bindContainerPath}`
         ],
         Dns: ['8.8.8.8', '8.8.4.4'],
+        Memory: 1024*1024*256,
+        // CpusetCpus: 1
         // CpuPeriod: 100000,
         // CpuQuota: 10000
       }

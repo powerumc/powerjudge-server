@@ -17,7 +17,10 @@ export class JudgeService {
     const request = await this.pick(message);
     const result = await this.compile.run(message, request);
 
-    await this.publish(message, result);
+    await this.redis.publish(message.id, {
+      command: "end",
+      message: JSON.stringify(result)
+    });
   }
 
   async pick(message: IBrokerMessage): Promise<IFilesRequest> {
@@ -32,10 +35,5 @@ export class JudgeService {
 
     return request;
   }
-
-  private async publish(message: IBrokerMessage, result: IExecuteResult) {
-    await this.redis.publish(message.id, JSON.stringify(result));
-  }
-
 
 }

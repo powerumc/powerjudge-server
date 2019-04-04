@@ -1,5 +1,5 @@
 import {Body, Controller, Post} from "@nestjs/common";
-import {ApplicationLoggerService, MongoService, BrokerProducerService, RedisService, IFilesRequest, CodesModel, IBrokerMessage} from "powerjudge-common";
+import {ApplicationLoggerService, MongoService, BrokerProducerService, RedisService, IFilesRequest, CodesModel, IBrokerMessage, IRedisPubSubMessage, IExecuteResult} from "powerjudge-common";
 import {Guid} from "guid-typescript";
 
 @Controller("/api/code")
@@ -31,10 +31,21 @@ export class CodeController {
       const subscribePromise = this.redis.subscribe(message.id);
       await this.producer.send(message);
 
-      const subscribeResult = await subscribePromise;
-      this.logger.info(subscribeResult);
+      while(true) {
+        const subscribeResult = await subscribePromise;
+        this.logger.info(JSON.stringify(subscribeResult));
 
-      return subscribeResult;
+        if (subscribeResult.command === "end") {
+          const executeResult = <IExecuteResult>JSON.parse(subscribeResult.message || "");
+          return {
+            result: {
+              stderr: executeResult.stderr,
+              stdout: executeResult.stdout
+            },
+            success: executeResult.success
+          }
+        }
+      }
     } catch(e) {
       this.logger.error(e);
     }

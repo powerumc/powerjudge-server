@@ -7,6 +7,11 @@ export interface IRedisOption {
   port: number;
 }
 
+export interface IRedisPubSubMessage {
+  command: string;
+  message?: string;
+}
+
 @Injectable()
 export class RedisService {
   private client: Redis.Redis;
@@ -56,10 +61,10 @@ export class RedisService {
     });
   }
 
-  subscribe(key: string): Promise<any> {
+  subscribe(key: string): Promise<IRedisPubSubMessage> {
     this.logger.info(`redis-service: subscribe key=${key}`);
 
-    return new Promise<any>(async (resolve) => {
+    return new Promise<IRedisPubSubMessage>(async (resolve) => {
       const client = await this._connect(this.option);
 
       client.subscribe(key);
@@ -67,17 +72,25 @@ export class RedisService {
         this.logger.info(`ioredis: ${channel}, ${message}`);
         if (key === channel) {
           this.logger.info(`redis-service: subscribe.message message=${message}`);
-          client.unsubscribe(key);
-          client.removeAllListeners();
-          client.disconnect();
-          this.logger.info(`redis-service: unsubscribe key=${key}`);
-          resolve(JSON.parse(message));
+
+          const packet = <IRedisPubSubMessage>JSON.parse(message);
+          resolve(packet);
         }
       });
     });
   }
 
-  publish(key: string, value: any): Promise<number> {
+  unsubscribe(key: string): Promise<void> {
+    this.logger.info(`redis-service: unsubscribe key=${key}`);
+
+    return new Promise<void>((resolve) => {
+      this.client.removeAllListeners();
+      this.client.unsubscribe(key);
+      resolve();
+    });
+  }
+
+  publish(key: string, value: IRedisPubSubMessage): Promise<number> {
     this.logger.info(`redis-service: publish key=${key}, value=${JSON.stringify(value)}`);
 
     return new Promise<number>((resolve, reject) => {
