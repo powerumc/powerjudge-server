@@ -63,3 +63,34 @@ export class StopWatch {
     return this.endtime[0] * 1e3 + this.endtime[1] / 1e6;
   }
 }
+
+export class Timeout<T> {
+  private timer;
+  private timeoutCallback: () => any;
+
+  constructor(private promise: Promise<T>,
+              private ms: number) {
+  }
+
+  async start() {
+    return new Promise<T>((resolve, reject) => {
+      this.timer = setTimeout(() => {
+        clearTimeout(this.timer);
+        resolve(this.timeoutCallback());
+      }, this.ms);
+
+      this.promise.then(resolve, reject);
+    });
+  }
+
+  cancel(): void {
+    clearTimeout(this.timer);
+  }
+
+  timeout(callback: () => any): this {
+    this.timeoutCallback = callback;
+
+    return this;
+  }
+
+}
