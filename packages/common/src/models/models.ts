@@ -18,6 +18,7 @@ export interface IExecuteResult {
   stderr: string;
   stdout: string;
   success: boolean;
+  elapsed?: number;
 }
 
 const request: IFilesRequest = {

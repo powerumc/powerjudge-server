@@ -41,13 +41,14 @@ export class CodeController {
             return resolve({
               result: {
                 stderr: executeResult.stderr,
-                stdout: executeResult.stdout
+                stdout: executeResult.stdout,
+                elapsed: executeResult.elapsed
               },
               success: executeResult.success
             });
           }
         }
-      }), 1000)
+      }), 1000*30)
         .timeout(() => {
           return {
             success: false,

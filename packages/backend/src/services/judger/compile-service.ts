@@ -102,9 +102,10 @@ export class CompileService {
           this.logger.info(`compile-service: _compileByChildProcess end container=${container.id}, elapsed=${stopwatch.end().elapsed}`);
 
           resolve({
+            success: !error,
             stderr,
             stdout,
-            success: !error
+            elapsed: stopwatch.elapsed,
           });
         });
       }
@@ -117,6 +118,7 @@ export class CompileService {
   }
 
   execute(container: Dockerode.Container, request: IFilesRequest, mapping: ICompilerMappingItem): Promise<IExecuteResult> {
+    const stopwatch = StopWatch.start();
     this.logger.info(`compile-service: execute request=${JSON.stringify(request)}`);
 
     return new Promise<IExecuteResult>((resolve, reject) => {
@@ -130,11 +132,13 @@ export class CompileService {
 
         const proc = child.exec(dockerCmd, (error, stdout, stderr) => {
           this.logger.info(`compile-service: execute child.exec container=${container.id}, error=${JSON.stringify({error, stderr, stdout})}`);
+          this.logger.info(`compile-service: execute child.exec end container=${container.id}, elapsed=${stopwatch.end().elapsed}`);
 
           resolve({
             stderr,
             stdout,
-            success: !error
+            success: !error,
+            elapsed: stopwatch.elapsed
           })
         });
       } catch(e) {
