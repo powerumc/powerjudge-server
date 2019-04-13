@@ -27,7 +27,7 @@ const getDefaultCompileOption = (args: string[]) => args.join(" ");
 const mappings: ICompilerMapping = {
   "cs": {
     name: "C#",
-    image: "powerjudge/powerjudge-compiler-mono:latest",
+    image: "powerjudge/powerjudge-compiler-mono:5.18.1.0",
     compile: "mcs",
     runtime: "mono",
     compileOption: getDefaultCompileOption,

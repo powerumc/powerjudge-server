@@ -14,16 +14,24 @@ export class JudgeService {
   }
 
   async process(message: IBrokerMessage): Promise<void> {
-    const request = await this.pick(message);
-    const result = await this.compile.run(message, request);
+    try {
+      const request = await this.getBrokerMessage(message);
+      const result = await this.compile.run(message, request);
 
-    await this.redis.publish(message.id, {
-      command: "end",
-      message: JSON.stringify(result)
-    });
+      await this.redis.publish(message.id, {
+        command: "end",
+        message: JSON.stringify(result)
+      });
+    } catch(e) {
+      this.logger.error(e);
+      await this.redis.publish(message.id, {
+        command: "error",
+        message: "internal server error"
+      });
+    }
   }
 
-  async pick(message: IBrokerMessage): Promise<IFilesRequest> {
+  async getBrokerMessage(message: IBrokerMessage): Promise<IFilesRequest> {
     this.logger.info(`judge-service.pick: message=${JSON.stringify(message)}`);
 
     const request = <IFilesRequest>await this.redis.get(message.id);

@@ -46,6 +46,11 @@ export class CodeController {
               },
               success: executeResult.success
             });
+          } else if (subscribeResult.command === "error") {
+            return resolve({
+              success: false,
+              result: subscribeResult.message
+            })
           }
         }
       }), 1000*30)
