@@ -7,6 +7,7 @@ export interface IFile {
 
 export interface IFilesRequest {
   language: string;
+  version?: string;
   files: IFile[]
 }
 
@@ -21,8 +22,13 @@ export interface IExecuteResult {
   elapsed?: number;
 }
 
+export interface ILanguageResponse {
+  [name: string]: string[]
+}
+
 const request: IFilesRequest = {
   language: "cs",
+  version: "5.18.1.0",
   files: [
     {
       name: "a.cs",
