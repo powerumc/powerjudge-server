@@ -5,7 +5,9 @@ import * as npath from "path";
 import {IExecuteStrategy} from "./interfaces";
 import {ICompilerMappingItem} from "../compile-mapping-service";
 import {ApplicationLoggerService, IExecuteResult, IFile, StopWatch} from "powerjudge-common";
+import {Injectable} from "@nestjs/common";
 
+@Injectable()
 export class DefaultExecuteStrategyService implements IExecuteStrategy {
 
   constructor(private logger: ApplicationLoggerService) {

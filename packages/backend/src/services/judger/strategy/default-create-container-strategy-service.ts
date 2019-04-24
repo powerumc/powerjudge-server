@@ -5,7 +5,9 @@ import {ICompilerMappingItem} from "../compile-mapping-service";
 import {ApplicationLoggerService} from "powerjudge-common";
 import {ApplicationConfigurationService} from "../../configurations";
 import {DockerService} from "../../docker";
+import {Injectable} from "@nestjs/common";
 
+@Injectable()
 export class DefaultCreateContainerStrategyService implements ICreateContainerStrategy {
 
   constructor(private logger: ApplicationLoggerService,

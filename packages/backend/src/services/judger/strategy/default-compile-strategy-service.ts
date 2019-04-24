@@ -5,7 +5,9 @@ import * as Dockerode from "dockerode";
 import {ICompileStrategy} from "./interfaces";
 import {ICompilerMappingItem} from "../compile-mapping-service";
 import {IFile, ApplicationLoggerService, IExecuteResult, StopWatch} from "powerjudge-common";
+import {Injectable} from "@nestjs/common";
 
+@Injectable()
 export class DefaultCompileStrategyService implements ICompileStrategy {
 
   constructor(private logger: ApplicationLoggerService) {
