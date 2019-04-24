@@ -3,7 +3,17 @@ import {ApplicationBootstrapperService, ApplicationConfigurationService} from ".
 import {DockerService} from "./docker";
 import {CommonServicesModule} from "powerjudge-common";
 import {BrokerConsumerService} from "./broker";
-import {CompileMappingService, CompileService, JudgeService} from "./judger";
+import {
+  CompileFactoryService,
+  CompileMappingService,
+  CompileService,
+  CreateContainerFactoryService,
+  DefaultCompileStrategyService,
+  DefaultCreateContainerStrategyService,
+  DefaultExecuteStrategyService,
+  ExecuteFactoryService,
+  JudgeService
+} from "./judger";
 
 const services = [
   ApplicationConfigurationService,
@@ -12,7 +22,13 @@ const services = [
   BrokerConsumerService,
   JudgeService,
   CompileService,
-  CompileMappingService
+  CompileMappingService,
+  CreateContainerFactoryService,
+  CompileFactoryService,
+  ExecuteFactoryService,
+  DefaultCreateContainerStrategyService,
+  DefaultCompileStrategyService,
+  DefaultExecuteStrategyService
 ];
 
 @Module({
