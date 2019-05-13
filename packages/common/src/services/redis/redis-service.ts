@@ -1,6 +1,7 @@
 import {Injectable} from "@nestjs/common";
 import {ApplicationLoggerService} from "../logging";
 import * as Redis from "ioredis";
+import {SubscribeChannel} from "./subscribe-channel";
 
 export interface IRedisOption {
   host: string;
@@ -61,22 +62,25 @@ export class RedisService {
     });
   }
 
-  subscribe(key: string): Promise<IRedisPubSubMessage> {
+  subscribe(key: string): Promise<SubscribeChannel> {
     this.logger.info(`redis-service: subscribe key=${key}`);
 
-    return new Promise<IRedisPubSubMessage>(async (resolve) => {
+    return new Promise<SubscribeChannel>(async (resolve) => {
       const client = await this._connect(this.option);
 
-      client.subscribe(key);
-      client.on("message", (channel, message) => {
-        this.logger.info(`ioredis: ${channel}, ${message}`);
-        if (key === channel) {
-          this.logger.info(`redis-service: subscribe.message message=${message}`);
+      // client.subscribe(key);
+      // client.on("message", (channel, message) => {
+      //   this.logger.info(`ioredis: ${channel}, ${message}`);
+      //   if (key === channel) {
+      //     this.logger.info(`redis-service: subscribe.message message=${message}`);
+      //
+      //     const packet = <IRedisPubSubMessage>JSON.parse(message);
+      //     resolve(packet);
+      //   }
+      // });
 
-          const packet = <IRedisPubSubMessage>JSON.parse(message);
-          resolve(packet);
-        }
-      });
+      const channel = new SubscribeChannel(client, key, this.logger);
+      resolve(channel);
     });
   }
 

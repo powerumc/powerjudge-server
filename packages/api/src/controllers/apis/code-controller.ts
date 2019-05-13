@@ -1,5 +1,16 @@
 import {Body, Controller, Post} from "@nestjs/common";
-import {ApplicationLoggerService, MongoService, BrokerProducerService, RedisService, IFilesRequest, CodesModel, IBrokerMessage, IRedisPubSubMessage, Timeout, IExecuteResult} from "powerjudge-common";
+import {
+  ApplicationLoggerService,
+  BrokerProducerService,
+  CodesModel,
+  IBrokerMessage,
+  IExecuteResult,
+  IFilesRequest,
+  IRedisPubSubMessage,
+  MongoService,
+  RedisService,
+  Timeout
+} from "powerjudge-common";
 import {Guid} from "guid-typescript";
 
 @Controller("/api/code")
@@ -28,41 +39,74 @@ export class CodeController {
       };
 
       await this.redis.set(message.id, request);
-      const subscribePromise = this.redis.subscribe(message.id);
+      const channel = await this.redis.subscribe(message.id);
       await this.producer.send(message);
 
-      const r = await new Timeout(new Promise(async (resolve, reject) => {
-        while (true) {
-          const subscribeResult = await subscribePromise;
-          this.logger.info(JSON.stringify(subscribeResult));
-
-          if (subscribeResult.command === "end") {
-            const executeResult = <IExecuteResult>JSON.parse(subscribeResult.message || "");
-            return resolve({
-              result: {
-                stderr: executeResult.stderr,
-                stdout: executeResult.stdout,
-                elapsed: executeResult.elapsed
-              },
-              success: executeResult.success
-            });
-          } else if (subscribeResult.command === "error") {
-            return resolve({
-              success: false,
-              result: subscribeResult.message
-            })
+      return await new Timeout(new Promise((resolve, reject) => {
+        channel.on("message", (msg: IRedisPubSubMessage) => {
+          switch (msg.command) {
+            case "end":
+              const executeResult = <IExecuteResult>JSON.parse(msg.message || "");
+              return resolve({
+                success: true,
+                result: {
+                  stderr: executeResult.stderr,
+                  stdout: executeResult.stdout,
+                  elapsed: executeResult.elapsed
+                }
+              });
+            case "error":
+              return resolve({
+                success: false,
+                result: msg.message
+              });
           }
-        }
-      }), 1000*30)
+        });
+      }), 1000 * 30)
         .timeout(() => {
           return {
             success: false,
-            message: "Timeout"
-          };
+            message: "timeout"
+          }
         })
         .start();
 
-      return r;
+      // await this.redis.set(message.id, request);
+      // const subscribePromise = this.redis.subscribe(message.id);
+      // await this.producer.send(message);
+      //
+      // const r = await new Timeout(new Promise(async (resolve, reject) => {
+      //   while (true) {
+      //     const subscribeResult = await subscribePromise;
+      //     this.logger.info(JSON.stringify(subscribeResult));
+      //
+      //     if (subscribeResult.command === "end") {
+      //       const executeResult = <IExecuteResult>JSON.parse(subscribeResult.message || "");
+      //       return resolve({
+      //         result: {
+      //           stderr: executeResult.stderr,
+      //           stdout: executeResult.stdout,
+      //           elapsed: executeResult.elapsed
+      //         },
+      //         success: executeResult.success
+      //       });
+      //     } else if (subscribeResult.command === "error") {
+      //       return resolve({
+      //         success: false,
+      //         result: subscribeResult.message
+      //       })
+      //     }
+      //   }
+      // }), 1000*30)
+      //   .timeout(() => {
+      //     return {
+      //       success: false,
+      //       message: "Timeout"
+      //     };
+      //   })
+      //   .start();
+      //
+      // return r;
 
     } catch(e) {
       this.logger.error(e);
