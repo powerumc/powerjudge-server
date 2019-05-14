@@ -1,2 +1,3 @@
 export * from "./apis";
-export * from "./controllers-module";
+export * from "./api-controllers-module";
+export * from "./websocket-controllers-module";

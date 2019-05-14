@@ -1,6 +1,11 @@
 import {ApplicationService} from "powerjudge-common";
 import {DefaultExecuteStrategyService, IExecuteStrategy} from "../strategy";
 import {Injectable} from "@nestjs/common";
+import {InteractiveExecuteStrategyService} from "../strategy/interactive-execute-strategy-service";
+
+export interface IExecuteFactoryServiceOption {
+  isInteractive: boolean;
+}
 
 @Injectable()
 export class ExecuteFactoryService {
@@ -9,7 +14,11 @@ export class ExecuteFactoryService {
 
   }
 
-  create(): IExecuteStrategy {
+  create(option?: IExecuteFactoryServiceOption): IExecuteStrategy {
+    if (option && option.isInteractive) {
+      return this.app.get(InteractiveExecuteStrategyService);
+    }
+
     return this.app.get(DefaultExecuteStrategyService);
   }
 

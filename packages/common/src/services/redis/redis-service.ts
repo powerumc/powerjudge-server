@@ -10,6 +10,7 @@ export interface IRedisOption {
 
 export interface IRedisPubSubMessage {
   command: string;
+  sender: string;
   message?: string;
 }
 
@@ -62,7 +63,7 @@ export class RedisService {
     });
   }
 
-  subscribe(key: string): Promise<SubscribeChannel> {
+  subscribe(key: string, iam: string): Promise<SubscribeChannel> {
     this.logger.info(`redis-service: subscribe key=${key}`);
 
     return new Promise<SubscribeChannel>(async (resolve) => {
@@ -79,7 +80,7 @@ export class RedisService {
       //   }
       // });
 
-      const channel = new SubscribeChannel(client, key, this.logger);
+      const channel = new SubscribeChannel(client, key, iam, this.logger);
       resolve(channel);
     });
   }

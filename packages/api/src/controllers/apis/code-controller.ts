@@ -39,7 +39,7 @@ export class CodeController {
       };
 
       await this.redis.set(message.id, request);
-      const channel = await this.redis.subscribe(message.id);
+      const channel = await this.redis.subscribe(message.id, "api");
       await this.producer.send(message);
 
       return await new Timeout(new Promise((resolve, reject) => {
