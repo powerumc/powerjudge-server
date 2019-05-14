@@ -13,7 +13,7 @@ import {
 } from "powerjudge-common";
 import {Guid} from "guid-typescript";
 
-@Controller("/api/code")
+@Controller("/api/v1/code")
 export class CodeController {
 
   constructor(private logger: ApplicationLoggerService,

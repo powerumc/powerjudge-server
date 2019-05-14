@@ -1,9 +1,9 @@
-import {SubscribeMessage, WebSocketGateway, WebSocketServer} from "@nestjs/websockets";
+import {SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse} from "@nestjs/websockets";
 import {Client, Server} from "socket.io";
 import {ApplicationLoggerService, BrokerProducerService, MongoService, RedisService, IFilesRequest, IBrokerMessage, CodesModel, Timeout, IRedisPubSubMessage, IExecuteResult} from "powerjudge-common";
 import {Guid} from "guid-typescript";
 
-@WebSocketGateway()
+@WebSocketGateway({namespace: "/sapi/v1"})
 export class CodeGateway {
 
   constructor(private logger: ApplicationLoggerService,
@@ -16,7 +16,7 @@ export class CodeGateway {
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage("/sapi/code")
+  @SubscribeMessage("code")
   async run(client: Client, request: IFilesRequest) {
     try {
       this.logger.info(`code-gateway.run: request=${JSON.stringify(request)}`);
@@ -66,5 +66,10 @@ export class CodeGateway {
     } catch(e) {
       this.logger.error(e);
     }
+  }
+
+  @SubscribeMessage("ping")
+  ping(): WsResponse<any> {
+    return {event: "pong", data: {result: "ok"}};
   }
 }
