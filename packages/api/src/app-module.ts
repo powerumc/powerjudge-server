@@ -1,13 +1,14 @@
 import {Module} from "@nestjs/common";
 import {ServicesModule} from "./services";
 import {CommandLinesModule} from "./command-lines";
-import {ControllersModule} from "./controllers";
+import {ApiControllersModule, WebsocketControllersModule} from "./controllers";
 
 @Module({
   imports: [
     ServicesModule,
     CommandLinesModule,
-    ControllersModule
+    ApiControllersModule,
+    WebsocketControllersModule
   ]
 })
 export class AppModule { }

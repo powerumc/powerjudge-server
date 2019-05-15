@@ -12,4 +12,4 @@ const controllers = [
   imports: [ServicesModule],
   controllers: [...controllers]
 })
-export class ControllersModule { }
+export class ApiControllersModule { }

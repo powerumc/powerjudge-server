@@ -16,17 +16,20 @@ export class JudgeService {
   async process(message: IBrokerMessage): Promise<void> {
     try {
       const request = await this.getBrokerMessage(message);
-      const result = await this.compile.run(message, request);
+      const channel = await this.redis.subscribe(message.id, "backend");
+      const result = await this.compile.run(message, request, channel);
 
       await this.redis.publish(message.id, {
         command: "end",
-        message: JSON.stringify(result)
+        message: JSON.stringify(result),
+        sender: "backend"
       });
     } catch(e) {
       this.logger.error(e);
       await this.redis.publish(message.id, {
         command: "error",
-        message: "internal server error"
+        message: "internal server error",
+        sender: "backend"
       });
     }
   }

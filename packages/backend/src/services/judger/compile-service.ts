@@ -1,11 +1,9 @@
 import * as fs from "fs";
 import * as _ from "lodash";
 import * as npath from "path";
-import * as child from "child_process";
 import * as Dockerode from "dockerode";
 import {Injectable} from "@nestjs/common";
-import MemoryStream = require("memorystream");
-import {ApplicationLoggerService, IFilesRequest, FsUtils, IBrokerMessage, IFile, StopWatch, IExecuteResult, ApplicationService} from "powerjudge-common";
+import {ApplicationLoggerService, IFilesRequest, FsUtils, IBrokerMessage, IFile, IExecuteResult, ApplicationService, SubscribeChannel} from "powerjudge-common";
 import {DockerService} from "../docker";
 import {ApplicationConfigurationService} from "../configurations";
 import {CompileMappingService, ICompilerMappingItem} from "./compile-mapping-service";
@@ -24,7 +22,7 @@ export class CompileService {
               private executeFactory: ExecuteFactoryService) {
   }
 
-  async run(message: IBrokerMessage, request: IFilesRequest): Promise<IExecuteResult> {
+  async run(message: IBrokerMessage, request: IFilesRequest, channel: SubscribeChannel): Promise<IExecuteResult> {
     let container: Dockerode.Container | null = null;
     try {
       const mapping = this.compileMapping.get(request.language);
@@ -34,7 +32,7 @@ export class CompileService {
         return compileResult;
       }
 
-      const executeResult = await this.execute(container, request, mapping);
+      const executeResult = await this.execute(container, request, mapping, channel);
       return executeResult;
     } finally {
       await this.removeFiles(message);
@@ -130,7 +128,7 @@ export class CompileService {
   //   });
   // }
 
-  private execute(container: Dockerode.Container, request: IFilesRequest, mapping: ICompilerMappingItem): Promise<IExecuteResult> {
+  private execute(container: Dockerode.Container, request: IFilesRequest, mapping: ICompilerMappingItem, channel: SubscribeChannel): Promise<IExecuteResult> {
     // const stopwatch = StopWatch.start();
     // this.logger.info(`compile-service: execute request=${JSON.stringify(request)}`);
     //
@@ -161,7 +159,7 @@ export class CompileService {
     // });
 
     const factory = this.executeFactory.create();
-    return factory.execute(container, request, mapping);
+    return factory.execute(container, request, mapping, channel);
   }
 
   private async remove(container: Dockerode.Container | null): Promise<void> {

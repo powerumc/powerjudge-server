@@ -7,8 +7,8 @@ import {
   ApplicationBootstrapperService,
   ApplicationConfigurationService,
   IBootstrapperResult
-} from "../services/configurations";
-import {DEFAULT_PORT} from "../constraints";
+} from "../../services/configurations";
+import {DEFAULT_PORT} from "../../constraints";
 import {ApplicationService, ApplicationLoggerService} from "powerjudge-common";
 
 
@@ -35,7 +35,7 @@ export class RunAction extends CommandLineAction {
       description: "port number",
       defaultValue: DEFAULT_PORT,
       argumentName: "NUMBER",
-      environmentVariable: "PJ_API_PORT"
+      environmentVariable: "PJ_BACKEND_PORT"
     });
   }
 
@@ -45,7 +45,7 @@ export class RunAction extends CommandLineAction {
     await this.run();
   }
 
-  private async run() {
+  private async run(): Promise<void> {
     const result = await this.check();
     if (!result) {
       this.logger.error("The program can not be executed.");
@@ -53,24 +53,35 @@ export class RunAction extends CommandLineAction {
     }
 
     this.logger.info(`Running server: ${this.port.value} port.`);
-
-    try {
-      await this.application.run(<number>this.port.value);
-    } catch(e) {
-      await this.application.close();
-    }
+    await this.application.run(<number>this.port.value);
   }
 
-  private async check() {
+  private async check(): Promise<boolean> {
     this.logger.info("Detecting requirements.");
 
     const result = await this.bootstrapper.check();
 
+    this.checkDocker(result);
     this.checkBroker(result);
     this.checkRedis(result);
     this.checkMongo(result);
 
     return result.result;
+  }
+
+  private checkDocker(result: IBootstrapperResult) {
+    this.logger.info("\t- Docker");
+    if (result.detail.docker) {
+      result.detail.docker.installed
+        ? this.logger.info("\t\t- Installed")
+        : this.logger.info("\t\t- Not installed");
+    } else {
+      this.logger.info("\t\t- Not configured");
+    }
+
+    result.detail.docker.connectable
+      ? this.logger.info("\t\t- Connected")
+      : this.logger.info("\t\t- Could not connect");
   }
 
   private checkBroker(result: IBootstrapperResult) {
@@ -79,14 +90,6 @@ export class RunAction extends CommandLineAction {
       result.detail.broker.connectable
         ? this.logger.info("\t\t- Connected")
         : this.logger.info("\t\t- Could not connect");
-
-      result.detail.broker.topicExists
-        ? this.logger.info("\t\t- Topic exists")
-        : this.logger.info("\t\t- Topic not exists");
-
-      result.detail.broker.topicCreated
-        ? this.logger.info("\t\t- Created")
-        : this.logger.info("\t\t- Pass");
     } else {
       this.logger.info("\t\t- Not configured");
     }
@@ -113,4 +116,5 @@ export class RunAction extends CommandLineAction {
       this.logger.info("\t\t- Not configured");
     }
   }
+
 }

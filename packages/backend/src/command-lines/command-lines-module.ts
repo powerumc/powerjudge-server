@@ -1,6 +1,6 @@
 import {Module} from "@nestjs/common";
 import {PowerjudgeBackendServer} from "./powerjudge-backend-server";
-import {RunAction} from "./run-action";
+import {RunAction} from "./actions/run-action";
 import {ServicesModule} from "../services";
 
 const services = [

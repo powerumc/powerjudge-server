@@ -4,7 +4,7 @@ import * as _ from "lodash";
 import * as npath from "path";
 import {IExecuteStrategy} from "./interfaces";
 import {ICompilerMappingItem} from "../compile-mapping-service";
-import {ApplicationLoggerService, IExecuteResult, IFile, StopWatch} from "powerjudge-common";
+import {ApplicationLoggerService, IExecuteResult, IFile, StopWatch, SubscribeChannel} from "powerjudge-common";
 import {Injectable} from "@nestjs/common";
 
 @Injectable()
@@ -14,7 +14,7 @@ export class DefaultExecuteStrategyService implements IExecuteStrategy {
 
   }
 
-  execute(container: Dockerode.Container, request, mapping: ICompilerMappingItem): Promise<IExecuteResult> {
+  execute(container: Dockerode.Container, request, mapping: ICompilerMappingItem, channel: SubscribeChannel): Promise<IExecuteResult> {
     const stopwatch = StopWatch.start();
     this.logger.info(`compile-service: execute request=${JSON.stringify(request)}`);
 
