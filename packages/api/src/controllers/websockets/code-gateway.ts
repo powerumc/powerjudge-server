@@ -3,7 +3,7 @@ import {Client, Server} from "socket.io";
 import {ApplicationLoggerService, BrokerProducerService, MongoService, RedisService, IFilesRequest, IBrokerMessage, CodesModel, Timeout, IRedisPubSubMessage, IExecuteResult} from "powerjudge-common";
 import {Guid} from "guid-typescript";
 
-@WebSocketGateway({namespace: "/sapi/v1"})
+@WebSocketGateway()
 export class CodeGateway {
 
   constructor(private logger: ApplicationLoggerService,
@@ -16,8 +16,8 @@ export class CodeGateway {
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage("code")
-  async run(client: Client, request: IFilesRequest) {
+  @SubscribeMessage("run")
+  async run(client: Client, request: IFilesRequest): Promise<WsResponse<any> | undefined> {
     try {
       this.logger.info(`code-gateway.run: request=${JSON.stringify(request)}`);
 
@@ -35,7 +35,7 @@ export class CodeGateway {
       const channel = await this.redis.subscribe(message.id, "api");
       await this.producer.send(message);
 
-      return await new Timeout(new Promise((resolve, reject) => {
+      const response = await new Timeout(new Promise((resolve, reject) => {
         channel.on("message", (msg: IRedisPubSubMessage) => {
           switch (msg.command) {
             case "end":
@@ -63,13 +63,13 @@ export class CodeGateway {
           }
         })
         .start();
+
+      return {
+        event: "run-result",
+        data: response
+      }
     } catch(e) {
       this.logger.error(e);
     }
-  }
-
-  @SubscribeMessage("ping")
-  ping(): WsResponse<any> {
-    return {event: "pong", data: {result: "ok"}};
   }
 }

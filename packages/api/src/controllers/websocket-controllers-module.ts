@@ -2,12 +2,12 @@ import {Module} from "@nestjs/common";
 import {CodeGateway} from "./websockets/code-gateway";
 import {ServicesModule} from "../services";
 
-const controllers = [
+const gateways = [
   CodeGateway
 ];
 
 @Module({
   imports: [ServicesModule],
-  providers: [...controllers]
+  providers: [...gateways]
 })
 export class WebsocketControllersModule { }

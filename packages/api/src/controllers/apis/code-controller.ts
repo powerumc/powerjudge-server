@@ -9,7 +9,8 @@ import {
   IRedisPubSubMessage,
   MongoService,
   RedisService,
-  Timeout
+  Timeout,
+  IFilesResponse
 } from "powerjudge-common";
 import {Guid} from "guid-typescript";
 
@@ -24,7 +25,7 @@ export class CodeController {
   }
 
   @Post("run")
-  async run(@Body() request: IFilesRequest) {
+  async run(@Body() request: IFilesRequest): Promise<IFilesResponse | undefined> {
     try {
       this.logger.info(`code-controller.run: request=${JSON.stringify(request)}`);
 
@@ -42,7 +43,7 @@ export class CodeController {
       const channel = await this.redis.subscribe(message.id, "api");
       await this.producer.send(message);
 
-      return await new Timeout(new Promise((resolve, reject) => {
+      return await new Timeout(new Promise<IFilesResponse>(resolve => {
         channel.on("message", (msg: IRedisPubSubMessage) => {
           switch (msg.command) {
             case "end":

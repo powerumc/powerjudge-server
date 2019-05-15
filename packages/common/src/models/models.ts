@@ -12,7 +12,8 @@ export interface IFilesRequest {
 }
 
 export interface IFilesResponse {
-  result: string;
+  success: boolean;
+  result: any;
 }
 
 export interface IExecuteResult {

@@ -1,7 +1,8 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from "./app-module";
-import {PowerjudgeBackendServer, RunAction} from "./command-lines";
+import {PowerjudgeBackendServer} from "./command-lines";
 import {ApplicationService} from "powerjudge-common";
+import {RunAction} from "./command-lines/actions";
 
 export async function runMain() {
   try {
