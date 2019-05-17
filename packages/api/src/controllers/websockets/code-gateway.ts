@@ -38,6 +38,10 @@ export class CodeGateway {
       const response = await new Timeout(new Promise((resolve, reject) => {
         channel.on("message", (msg: IRedisPubSubMessage) => {
           switch (msg.command) {
+            case "stdout":
+              console.log("stdout: " + msg.message);
+              //this.server.clients(client).emit("stdout", msg.message);
+              break;
             case "end":
               const executeResult = <IExecuteResult>JSON.parse(msg.message || "");
               return resolve({

@@ -16,7 +16,7 @@ export class DefaultCompileStrategyService implements ICompileStrategy {
 
   compile(container: Dockerode.Container, message, request, mapping: ICompilerMappingItem): Promise<IExecuteResult> {
     const stopwatch = StopWatch.start();
-    this.logger.info(`compile-service: _compile container=${container.id}`);
+    this.logger.info(`default-compile-strategy-service: _compile container=${container.id}`);
 
     return new Promise<IExecuteResult>((resolve, reject) => {
       try {

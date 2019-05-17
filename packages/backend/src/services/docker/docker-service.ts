@@ -41,7 +41,7 @@ export class DockerService {
       AttachStdout: true,
       Tty: true,
       OpenStdin: true,
-      StdinOnce: false,
+      StdinOnce: true,
       WorkingDir: bindContainerPath,
       Cmd: ["/bin/bash"],
       HostConfig: {

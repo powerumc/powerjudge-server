@@ -35,8 +35,8 @@ export class CompileService {
       const executeResult = await this.execute(container, request, mapping, channel);
       return executeResult;
     } finally {
-      await this.removeFiles(message);
-      await this.remove(container);
+      // await this.removeFiles(message);
+      // await this.remove(container);
     }
   }
 
@@ -128,7 +128,7 @@ export class CompileService {
   //   });
   // }
 
-  private execute(container: Dockerode.Container, request: IFilesRequest, mapping: ICompilerMappingItem, channel: SubscribeChannel): Promise<IExecuteResult> {
+  private async execute(container: Dockerode.Container, request: IFilesRequest, mapping: ICompilerMappingItem, channel: SubscribeChannel): Promise<IExecuteResult> {
     // const stopwatch = StopWatch.start();
     // this.logger.info(`compile-service: execute request=${JSON.stringify(request)}`);
     //
@@ -158,8 +158,10 @@ export class CompileService {
     //   }
     // });
 
-    const factory = this.executeFactory.create();
-    return factory.execute(container, request, mapping, channel);
+    const factory = this.executeFactory.create({
+      isInteractive: request.options.isInteractive
+    });
+    return await factory.execute(container, request, mapping, channel);
   }
 
   private async remove(container: Dockerode.Container | null): Promise<void> {

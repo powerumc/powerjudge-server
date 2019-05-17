@@ -16,7 +16,7 @@ export class DefaultExecuteStrategyService implements IExecuteStrategy {
 
   execute(container: Dockerode.Container, request, mapping: ICompilerMappingItem, channel: SubscribeChannel): Promise<IExecuteResult> {
     const stopwatch = StopWatch.start();
-    this.logger.info(`compile-service: execute request=${JSON.stringify(request)}`);
+    this.logger.info(`default-execute-strategy-service: execute request=${JSON.stringify(request)}`);
 
     return new Promise<IExecuteResult>((resolve, reject) => {
       try {
