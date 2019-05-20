@@ -5,7 +5,7 @@ import {Injectable} from "@nestjs/common";
 import {IExecuteStrategy} from "./interfaces";
 import * as Dockerode from "dockerode";
 import {ICompilerMappingItem} from "../compile-mapping-service";
-import {IExecuteResult, ApplicationLoggerService, IFile, StopWatch, SubscribeChannel, RedisService} from "powerjudge-common";
+import {IExecuteResult, ApplicationLoggerService, IFile, StopWatch, SubscribeChannel, RedisService, IRedisPubSubMessage} from "powerjudge-common";
 import {DockerService} from "../../docker";
 import * as child from "child_process";
 import * as pty from "node-pty";
@@ -56,6 +56,14 @@ export class InteractiveExecuteStrategyService implements IExecuteStrategy {
             success: true,
             elapsed: stopwatch.elapsed
           });
+        });
+
+        channel.on("message", (msg: IRedisPubSubMessage) => {
+          switch(msg.command) {
+            case "stdin":
+              term.write(msg.message || "");
+              break;
+          }
         });
 
         // const runtimeCmd = `${mapping.runtime} ${mapping.runtimeOption(filePaths)}`;

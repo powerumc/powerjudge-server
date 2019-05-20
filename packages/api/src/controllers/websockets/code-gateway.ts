@@ -1,5 +1,5 @@
 import {SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse} from "@nestjs/websockets";
-import {Client, Server} from "socket.io";
+import {Client, Server, Socket} from "socket.io";
 import {ApplicationLoggerService, BrokerProducerService, MongoService, RedisService, IFilesRequest, IBrokerMessage, CodesModel, Timeout, IRedisPubSubMessage, IExecuteResult} from "powerjudge-common";
 import {Guid} from "guid-typescript";
 
@@ -10,14 +10,14 @@ export class CodeGateway {
               private mongo: MongoService,
               private producer: BrokerProducerService,
               private redis: RedisService) {
-
+    console.log("CodeGateway constructor");
   }
 
   @WebSocketServer()
   server: Server;
 
   @SubscribeMessage("run")
-  async run(client: Client, request: IFilesRequest): Promise<WsResponse<any> | undefined> {
+  async run(client: Socket, request: IFilesRequest): Promise<WsResponse<any> | undefined> {
     try {
       this.logger.info(`code-gateway.run: request=${JSON.stringify(request)}`);
 
@@ -35,12 +35,20 @@ export class CodeGateway {
       const channel = await this.redis.subscribe(message.id, "api");
       await this.producer.send(message);
 
+      client.on("stdin", data => {
+        console.log("stdin", data);
+        this.redis.publish(message.id, {
+          command: "stdin",
+          message: data,
+          sender: "api"
+        });
+      });
+
       const response = await new Timeout(new Promise((resolve, reject) => {
         channel.on("message", (msg: IRedisPubSubMessage) => {
           switch (msg.command) {
             case "stdout":
-              console.log("stdout: " + msg.message);
-              //this.server.clients(client).emit("stdout", msg.message);
+              client.emit("stdout", msg.message);
               break;
             case "end":
               const executeResult = <IExecuteResult>JSON.parse(msg.message || "");
@@ -57,6 +65,9 @@ export class CodeGateway {
                 success: false,
                 result: msg.message
               });
+            case "message":
+              client.emit("message", msg.message);
+              break;
           }
         });
       }), 1000 * 30)
@@ -65,6 +76,9 @@ export class CodeGateway {
             success: false,
             message: "timeout"
           }
+        })
+        .finish(() => {
+          client.removeAllListeners();
         })
         .start();
 

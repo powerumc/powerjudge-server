@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import * as npath from "path";
 import * as Dockerode from "dockerode";
 import {Injectable} from "@nestjs/common";
-import {ApplicationLoggerService, IFilesRequest, FsUtils, IBrokerMessage, IFile, IExecuteResult, ApplicationService, SubscribeChannel} from "powerjudge-common";
+import {ApplicationLoggerService, IFilesRequest, FsUtils, IBrokerMessage, IFile, IExecuteResult, ApplicationService, SubscribeChannel, RedisService} from "powerjudge-common";
 import {DockerService} from "../docker";
 import {ApplicationConfigurationService} from "../configurations";
 import {CompileMappingService, ICompilerMappingItem} from "./compile-mapping-service";
@@ -15,6 +15,7 @@ export class CompileService {
   constructor(private logger: ApplicationLoggerService,
               private app: ApplicationService,
               private docker: DockerService,
+              private redis: RedisService,
               private config: ApplicationConfigurationService,
               private compileMapping: CompileMappingService,
               private createContainerFactory: CreateContainerFactoryService,
@@ -32,21 +33,32 @@ export class CompileService {
         return compileResult;
       }
 
-      const executeResult = await this.execute(container, request, mapping, channel);
+      const executeResult = await this.execute(container, message, request, mapping, channel);
       return executeResult;
     } finally {
-      // await this.removeFiles(message);
-      // await this.remove(container);
+      await this.removeFiles(message);
+      await this.remove(container);
     }
   }
 
   private createContainer(message: IBrokerMessage, mapping: ICompilerMappingItem): Promise<Dockerode.Container> {
+    this.redis.publish(message.id, {
+      command: "message",
+      message: "Ready...",
+      sender: "backend"
+    });
     const factory = this.createContainerFactory.create();
     return factory.createContainer(message, mapping);
   }
 
   private async compile(container: Dockerode.Container, message: IBrokerMessage, request: IFilesRequest, mapping: ICompilerMappingItem): Promise<IExecuteResult> {
     this.logger.info(`compile-service: compile message=${JSON.stringify(message)}, request=${JSON.stringify(request)}`);
+
+    this.redis.publish(message.id, {
+      command: "message",
+      message: "Compiling...",
+      sender: "backend"
+    });
 
     try {
       await this.writeFiles(message, request);
@@ -128,7 +140,7 @@ export class CompileService {
   //   });
   // }
 
-  private async execute(container: Dockerode.Container, request: IFilesRequest, mapping: ICompilerMappingItem, channel: SubscribeChannel): Promise<IExecuteResult> {
+  private async execute(container: Dockerode.Container, message: IBrokerMessage, request: IFilesRequest, mapping: ICompilerMappingItem, channel: SubscribeChannel): Promise<IExecuteResult> {
     // const stopwatch = StopWatch.start();
     // this.logger.info(`compile-service: execute request=${JSON.stringify(request)}`);
     //
@@ -157,6 +169,12 @@ export class CompileService {
     //     reject(e);
     //   }
     // });
+
+    this.redis.publish(message.id, {
+      command: "message",
+      message: "OK...",
+      sender: "backend"
+    });
 
     const factory = this.executeFactory.create({
       isInteractive: request.options.isInteractive
