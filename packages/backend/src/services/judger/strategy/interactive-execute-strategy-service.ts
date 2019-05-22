@@ -9,6 +9,7 @@ import {IExecuteResult, ApplicationLoggerService, IFile, StopWatch, SubscribeCha
 import {DockerService} from "../../docker";
 import * as child from "child_process";
 import * as pty from "node-pty";
+import stripAnsi from "strip-ansi";
 
 @Injectable()
 export class InteractiveExecuteStrategyService implements IExecuteStrategy {
@@ -51,8 +52,8 @@ export class InteractiveExecuteStrategyService implements IExecuteStrategy {
         term.on("exit", () => {
           stopwatch.end();
           resolve({
-            stderr,
-            stdout,
+            stderr: stripAnsi(stderr),
+            stdout: stripAnsi(stdout),
             success: true,
             elapsed: stopwatch.elapsed
           });

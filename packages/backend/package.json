@@ -52,7 +52,8 @@
     "winston-daily-rotate-file": "3.8.0",
     "lodash": "^4.17.11",
     "memorystream": "^0.3.1",
-    "node-pty": "^0.8.1"
+    "node-pty": "^0.8.1",
+    "strip-ansi": "^5.2.0"
   },
   "devDependencies": {
     "@types/express": "^4.16.1",
