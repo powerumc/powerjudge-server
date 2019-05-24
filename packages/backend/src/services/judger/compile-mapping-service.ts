@@ -31,6 +31,20 @@ const getDefaultCompileOption = (args: string[]) => args.join(" ");
 
 const mappings: ICompilerMapping = {
   "cs": {
+    "5.20.1.19": {
+      name: "C#",
+      image: "powerjudge/powerjudge-compiler-mono:5.20.1.19",
+      compile: "mcs",
+      runtime: "mono",
+      compileOption: getDefaultCompileOption,
+      runtimeOption(args: string[]) { return "pj.exe" },
+      out: {
+        option: "-out",
+        filename: "pj",
+        ext: ".exe"
+      },
+      joinOutputOption: (option: ICompilerMappingOutOption) => `${option.option}:${option.filename}${option.ext}`
+    },
     "5.18.1.0": {
       name: "C#",
       image: "powerjudge/powerjudge-compiler-mono:5.18.1.0",
