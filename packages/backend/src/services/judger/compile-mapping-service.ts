@@ -13,8 +13,8 @@ export interface ICompilerMappingVersion {
 export interface ICompilerMappingItem {
   name: string;
   image: string;
-  compile: string;
-  runtime: string;
+  compile?: string;
+  runtime?: string;
   compileOption?: (files: string[]) => string | undefined;
   runtimeOption?: (files: string[]) => string | undefined;
 }
@@ -52,6 +52,14 @@ const mappings: ICompilerMapping = {
       compile: "cc",
       runtime: "./pj.out",
       compileOption: files => `${files.join(" ")} -o pj.out`
+    }
+  },
+  "bash": {
+    "6.0.7": {
+      name: "bash",
+      image: "powerjudge/powerjudge-compiler-bash:5.0.7",
+      runtime: "",
+      runtimeOption: files => ""
     }
   }
 };
