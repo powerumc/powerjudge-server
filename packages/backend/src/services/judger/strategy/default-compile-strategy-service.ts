@@ -22,15 +22,17 @@ export class DefaultCompileStrategyService implements ICompileStrategy {
       try {
         const filePaths = [];
         this.getFilePaths(request.files, "./", filePaths);
-        const defaultCompileOption = mapping.defaultCompileOption || "";
-        const compileOption = (mapping.compileOption && mapping.compileOption!(filePaths)) || "";
-        const joinOutputOption = mapping.joinOutputOption(mapping.out) || "";
-        const compileCmd = `${mapping.compile} ${defaultCompileOption} ${compileOption} ${joinOutputOption}`;
+        const compileOption = (mapping.compileOption && mapping.compileOption(filePaths)) || "";
+        const compileCmd = `${mapping.compile} ${compileOption}`;
         const dockerCmd = `docker exec ${container.id} ${compileCmd}`;
         this.logger.info(`compile-service: _compileByChildProcess dockerCmd=${dockerCmd}`);
 
         const proc = child.exec(dockerCmd, (error, stdout, stderr) => {
-          this.logger.info(`compile-service: _compileByChildProcess container=${container.id}, error=${JSON.stringify({ error, stderr, stdout })}`);
+          this.logger.info(`compile-service: _compileByChildProcess container=${container.id}, error=${JSON.stringify({
+            error,
+            stderr,
+            stdout
+          })}`);
           this.logger.info(`compile-service: _compileByChildProcess end container=${container.id}, elapsed=${stopwatch.end().elapsed}`);
 
           resolve({

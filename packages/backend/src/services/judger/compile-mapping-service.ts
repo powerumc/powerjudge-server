@@ -15,16 +15,11 @@ export interface ICompilerMappingItem {
   image: string;
   compile: string;
   runtime: string;
-  defaultCompileOption?: string;
-  defaultRuntimeOption?: string;
-  compileOption?: (args: string[]) => string | undefined;
-  runtimeOption?: (args: string[]) => string | undefined;
-  out: ICompilerMappingOutOption;
-  joinOutputOption: (option: ICompilerMappingOutOption) => string;
+  compileOption?: (files: string[]) => string | undefined;
+  runtimeOption?: (files: string[]) => string | undefined;
 }
 
 export interface ICompilerMappingOutOption {
-  option: string;
   filename: string;
   ext: string;
 }
@@ -38,45 +33,25 @@ const mappings: ICompilerMapping = {
       image: "powerjudge/powerjudge-compiler-mono:5.20.1.19",
       compile: "mcs",
       runtime: "mono",
-      compileOption: getDefaultCompileOption,
-      runtimeOption(args: string[]) { return "pj.exe" },
-      out: {
-        option: "-out",
-        filename: "pj",
-        ext: ".exe"
-      },
-      joinOutputOption: (option: ICompilerMappingOutOption) => `${option.option}:${option.filename}${option.ext}`
+      compileOption: files => `${files.join(" ")} -out:pj.exe`,
+      runtimeOption: files => "pj.exe"
     },
     "5.18.1.0": {
       name: "C#",
       image: "powerjudge/powerjudge-compiler-mono:5.18.1.0",
       compile: "mcs",
       runtime: "mono",
-      compileOption: getDefaultCompileOption,
-      runtimeOption(args: string[]) { return "pj.exe" },
-      out: {
-        option: "-out",
-        filename: "pj",
-        ext: ".exe"
-      },
-      joinOutputOption: (option: ICompilerMappingOutOption) => `${option.option}:${option.filename}${option.ext}`
+      compileOption: files => `${files.join(" ")} -out:pj.exe`,
+      runtimeOption: files => "pj.exe"
     }
   },
   "c": {
     "8.3.0": {
       name: "C",
       image: "powerjudge/powerjudge-compiler-gcc:8.3.0",
-      compile: "gcc",
-      runtime: "sh",
-      defaultCompileOption: "-lm",
-      compileOption: getDefaultCompileOption,
-      runtimeOption(args: string[]) { return "pj.out" },
-      out: {
-        option: "-o",
-        filename: "pj",
-        ext: ".out"
-      },
-      joinOutputOption: (option: ICompilerMappingOutOption) => `${option.option} ${option.filename}${option.ext}`
+      compile: "cc",
+      runtime: "./pj.out",
+      compileOption: files => `${files.join(" ")} -o pj.out`
     }
   }
 };
