@@ -22,7 +22,10 @@ export class DefaultCompileStrategyService implements ICompileStrategy {
       try {
         const filePaths = [];
         this.getFilePaths(request.files, "./", filePaths);
-        const compileCmd = `${mapping.compile} ${mapping.compileOption(filePaths)} ${mapping.joinOutputOption(mapping.out)}`;
+        const defaultCompileOption = mapping.defaultCompileOption || "";
+        const compileOption = (mapping.compileOption && mapping.compileOption!(filePaths)) || "";
+        const joinOutputOption = mapping.joinOutputOption(mapping.out) || "";
+        const compileCmd = `${mapping.compile} ${defaultCompileOption} ${compileOption} ${joinOutputOption}`;
         const dockerCmd = `docker exec ${container.id} ${compileCmd}`;
         this.logger.info(`compile-service: _compileByChildProcess dockerCmd=${dockerCmd}`);
 

@@ -23,7 +23,8 @@ export class DefaultExecuteStrategyService implements IExecuteStrategy {
         const filePaths = [];
         this.getFilePaths(request.files, "./", filePaths);
 
-        const runtimeCmd = `${mapping.runtime} ${mapping.runtimeOption(filePaths)}`;
+        const runtimeOption = (mapping.runtimeOption && mapping.runtimeOption(filePaths)) || "";
+        const runtimeCmd = `${mapping.runtime} ${runtimeOption}`;
         const dockerCmd = `docker exec ${container.id} ${runtimeCmd}`;
         this.logger.info(`compile-service: execute container=${container.id}, dockerCmd=${dockerCmd}`);
 

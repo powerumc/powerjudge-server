@@ -29,7 +29,8 @@ export class InteractiveExecuteStrategyService implements IExecuteStrategy {
         const filePaths = [];
         this.getFilePaths(request.files, "./", filePaths);
 
-        const runtimeCmd = `${mapping.runtime} ${mapping.runtimeOption(filePaths)}`;
+        const runtimeOption = (mapping.runtimeOption && mapping.runtimeOption(filePaths)) || "";
+        const runtimeCmd = `${mapping.runtime} ${runtimeOption}`;
         const dockerCmd = `docker exec -it ${container.id} ${runtimeCmd}`;
         this.logger.info(`interactive-execute-strategy-service: execute container=${container.id}, dockerCmd=${dockerCmd}`);
 

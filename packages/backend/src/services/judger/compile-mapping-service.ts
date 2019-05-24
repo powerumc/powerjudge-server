@@ -15,8 +15,10 @@ export interface ICompilerMappingItem {
   image: string;
   compile: string;
   runtime: string;
-  compileOption?: any;
-  runtimeOption?: any;
+  defaultCompileOption?: string;
+  defaultRuntimeOption?: string;
+  compileOption?: (args: string[]) => string | undefined;
+  runtimeOption?: (args: string[]) => string | undefined;
   out: ICompilerMappingOutOption;
   joinOutputOption: (option: ICompilerMappingOutOption) => string;
 }
@@ -58,6 +60,23 @@ const mappings: ICompilerMapping = {
         ext: ".exe"
       },
       joinOutputOption: (option: ICompilerMappingOutOption) => `${option.option}:${option.filename}${option.ext}`
+    }
+  },
+  "c": {
+    "8.3.0": {
+      name: "C",
+      image: "powerjudge/powerjudge-compiler-gcc:8.3.0",
+      compile: "gcc",
+      runtime: "sh",
+      defaultCompileOption: "-lm",
+      compileOption: getDefaultCompileOption,
+      runtimeOption(args: string[]) { return "pj.out" },
+      out: {
+        option: "-o",
+        filename: "pj",
+        ext: ".out"
+      },
+      joinOutputOption: (option: ICompilerMappingOutOption) => `${option.option} ${option.filename}${option.ext}`
     }
   }
 };
