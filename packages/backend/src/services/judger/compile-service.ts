@@ -71,7 +71,7 @@ export class CompileService {
       // return {container, result: compileResult};
 
       const factory = this.compileFactory.create();
-      return factory.compile(container, message, request, mapping);
+      return await factory.compile(container, message, request, mapping);
     }
     catch(e) {
       this.logger.error(e);
