@@ -9,6 +9,7 @@ export interface IFilesRequest {
   language: string;
   version?: string;
   files: IFile[],
+  entry?: string;
   options: {
     isInteractive: boolean;
   }

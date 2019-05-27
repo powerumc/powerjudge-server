@@ -195,7 +195,7 @@ export class CompileService {
   private async removeFiles(message: IBrokerMessage) {
     const path = this.config.getPrivilegeRoot(message);
 
-    this.logger.info(`judge-service: removeFiles message:${JSON.stringify(message)}, path=${path}`);
+    this.logger.info(`compile-service: removeFiles message:${JSON.stringify(message)}, path=${path}`);
     await FsUtils.rmdir(path);
   }
 
@@ -203,7 +203,7 @@ export class CompileService {
     const path = this.config.getPrivilegeRoot(message);
     await FsUtils.mkdir(path);
 
-    this.logger.info(`judge-service: writeFiles path=${path}, message=${JSON.stringify(message)}, request=${JSON.stringify(request)}`);
+    this.logger.info(`compile-service: writeFiles path=${path}, message=${JSON.stringify(message)}, request=${JSON.stringify(request)}`);
     try {
       await this.recursiveFiles(request.files, path);
     } catch(e) {
@@ -228,18 +228,6 @@ export class CompileService {
         }
       } catch(e) {
         console.error(e);
-      }
-    }
-  }
-
-  private getFilePaths(files: IFile[], path: string, list: string[]) {
-    for(const file of files) {
-      const isFile = _.isString(file.value);
-
-      if (isFile) {
-        list.push(npath.join(path, file.name));
-      } else {
-        this.getFilePaths(<IFile[]>file.value, npath.join(path, file.name), list);
       }
     }
   }
