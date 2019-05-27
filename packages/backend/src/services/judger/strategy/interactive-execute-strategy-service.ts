@@ -5,7 +5,7 @@ import {Injectable} from "@nestjs/common";
 import {IExecuteStrategy} from "./interfaces";
 import * as Dockerode from "dockerode";
 import {ICompilerMappingItem} from "../compile-mapping-service";
-import {IExecuteResult, ApplicationLoggerService, IFile, StopWatch, SubscribeChannel, RedisService, IRedisPubSubMessage} from "powerjudge-common";
+import {IExecuteResult, ApplicationLoggerService, IFile, StopWatch, SubscribeChannel, RedisService, IRedisPubSubMessage, IFilesRequest} from "powerjudge-common";
 import {DockerService} from "../../docker";
 import * as child from "child_process";
 import * as pty from "node-pty";
@@ -20,7 +20,7 @@ export class InteractiveExecuteStrategyService implements IExecuteStrategy {
 
   }
 
-  execute(container: Dockerode.Container, request, mapping: ICompilerMappingItem, channel: SubscribeChannel): Promise<IExecuteResult> {
+  execute(container: Dockerode.Container, request: IFilesRequest, mapping: ICompilerMappingItem, channel: SubscribeChannel): Promise<IExecuteResult> {
     const stopwatch = StopWatch.start();
     this.logger.info(`interactive-execute-strategy-service: execute request=${JSON.stringify(request)}`);
 
@@ -29,7 +29,7 @@ export class InteractiveExecuteStrategyService implements IExecuteStrategy {
         const filePaths = [];
         this.getFilePaths(request.files, "./", filePaths);
 
-        const runtimeOption = (mapping.runtimeOption && mapping.runtimeOption(filePaths)) || "";
+        const runtimeOption = (mapping.runtimeOption && mapping.runtimeOption(filePaths, request.entry)) || "";
         const runtimeCmd = `${mapping.runtime} ${runtimeOption}`;
         const dockerCmd = `docker exec -it ${container.id} ${runtimeCmd}`;
         this.logger.info(`interactive-execute-strategy-service: execute container=${container.id}, dockerCmd=${dockerCmd}`);
@@ -61,7 +61,7 @@ export class InteractiveExecuteStrategyService implements IExecuteStrategy {
         });
 
         channel.on("message", (msg: IRedisPubSubMessage) => {
-          switch(msg.command) {
+          switch (msg.command) {
             case "stdin":
               term.write(msg.message || "");
               break;
@@ -119,7 +119,7 @@ export class InteractiveExecuteStrategyService implements IExecuteStrategy {
         //   elapsed: stopwatch.elapsed
         // });
 
-      } catch(e) {
+      } catch (e) {
         this.logger.error(e);
         reject(e);
       }

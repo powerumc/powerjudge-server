@@ -43,7 +43,7 @@ export class DockerService {
       OpenStdin: true,
       StdinOnce: true,
       WorkingDir: bindContainerPath,
-      Cmd: ["/bin/bash"],
+      // Cmd: ["/bin/bash"],
       HostConfig: {
         Binds: [
           `${bindHostPath}:${bindContainerPath}`
