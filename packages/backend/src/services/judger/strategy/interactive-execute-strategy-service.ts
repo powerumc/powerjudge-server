@@ -24,7 +24,7 @@ export class InteractiveExecuteStrategyService implements IExecuteStrategy {
     const stopwatch = StopWatch.start();
     this.logger.info(`interactive-execute-strategy-service: execute request=${JSON.stringify(request)}`);
 
-    return new Promise<IExecuteResult>(async (resolve, reject) => {
+    return new Promise<IExecuteResult>((resolve, reject) => {
       try {
         const filePaths = [];
         this.getFilePaths(request.files, "./", filePaths);
