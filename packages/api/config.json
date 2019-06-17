@@ -1,0 +1,21 @@
+{
+  "name": "powerjudge-api-server",
+  "servers": {
+    "broker": {
+      "hosts": "localhost:9092",
+      "topic": {
+        "name": "powerjudge",
+        "partitions": 10
+      }
+    },
+    "redis": {
+      "host": "localhost",
+      "port": 6379
+    },
+    "mongo": {
+      "uri": "mongodb://localhost:27017/pj",
+      "user": "pjuser",
+      "password": "pjuser"
+    }
+  }
+}

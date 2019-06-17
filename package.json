@@ -1,0 +1,54 @@
+{
+  "name": "powerjudge",
+  "version": "0.0.1",
+  "description": "Online judge server",
+  "keywords": [
+    "judge",
+    "judge-server",
+    "judge-system"
+  ],
+  "bin": {
+    "powerjudge-api-server": "./dist/src/bin/powerjudge-api-server.js"
+  },
+  "main": "./dist/src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm-run-all clean gulp:build",
+    "start": "npm-run-all clean build:tsc gulp:all server",
+    "start:dev": "npm-run-all clean gulp:all --parallel watch:build --print-label",
+    "clean": "rimraf dist",
+    "build:tsc": "tsc",
+    "gulp:build": "node_modules/.bin/gulp build",
+    "gulp:all": "node_modules/.bin/gulp",
+    "server": "node ./dist/src/main.js",
+    "watch:build": "tsc --watch",
+    "watch:server": "nodemon -- run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/powerumc/powerjudge-server.git"
+  },
+  "author": "powerumc",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/powerumc/powerjudge-server/issues"
+  },
+  "homepage": "https://github.com/powerumc/powerjudge-server#readme",
+  "dependencies": {
+    "debug": "^4.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.24",
+    "@types/gulp": "^4.0.6",
+    "@types/command-exists": "^1.2.0",
+    "@types/dockerode": "^2.5.12",
+    "nodemon": "^1.18.9",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^2.6.3",
+    "typescript": "^3.3.3",
+    "ts-node": "^8.0.3",
+    "gulp": "^4.0.0",
+    "gulp-typescript": "^5.0.1",
+    "gulp-sourcemaps": "^2.6.5"
+  }
+}
