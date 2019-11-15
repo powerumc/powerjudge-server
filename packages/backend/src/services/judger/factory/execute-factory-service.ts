@@ -1,7 +1,6 @@
 import {ApplicationService} from "powerjudge-common";
-import {DefaultExecuteStrategyService, IExecuteStrategy} from "../strategy";
+import {DefaultExecuteStrategyService, InteractiveExecuteStrategyService, IExecuteStrategy} from "../strategy";
 import {Injectable} from "@nestjs/common";
-import {InteractiveExecuteStrategyService} from "../strategy/interactive-execute-strategy-service";
 
 export interface IExecuteFactoryServiceOption {
   isInteractive: boolean;

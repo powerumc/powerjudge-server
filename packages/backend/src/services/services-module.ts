@@ -12,6 +12,7 @@ import {
   DefaultCreateContainerStrategyService,
   DefaultExecuteStrategyService,
   ExecuteFactoryService,
+  InteractiveExecuteStrategyService,
   JudgeService
 } from "./judger";
 
@@ -28,7 +29,8 @@ const services = [
   ExecuteFactoryService,
   DefaultCreateContainerStrategyService,
   DefaultCompileStrategyService,
-  DefaultExecuteStrategyService
+  DefaultExecuteStrategyService,
+  InteractiveExecuteStrategyService
 ];
 
 @Module({

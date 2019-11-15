@@ -8,7 +8,11 @@ export interface IFile {
 export interface IFilesRequest {
   language: string;
   version?: string;
-  files: IFile[]
+  files: IFile[],
+  entry?: string;
+  options: {
+    isInteractive: boolean;
+  }
 }
 
 export interface IFilesResponse {
@@ -30,6 +34,9 @@ export interface ILanguageResponse {
 const request: IFilesRequest = {
   language: "cs",
   version: "5.18.1.0",
+  options: {
+    isInteractive: false
+  },
   files: [
     {
       name: "a.cs",

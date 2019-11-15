@@ -4,7 +4,7 @@ import * as _ from "lodash";
 import * as npath from "path";
 import {IExecuteStrategy} from "./interfaces";
 import {ICompilerMappingItem} from "../compile-mapping-service";
-import {ApplicationLoggerService, IExecuteResult, IFile, StopWatch, SubscribeChannel} from "powerjudge-common";
+import {ApplicationLoggerService, IExecuteResult, IFile, StopWatch, SubscribeChannel, IFilesRequest} from "powerjudge-common";
 import {Injectable} from "@nestjs/common";
 
 @Injectable()
@@ -14,29 +14,30 @@ export class DefaultExecuteStrategyService implements IExecuteStrategy {
 
   }
 
-  execute(container: Dockerode.Container, request, mapping: ICompilerMappingItem, channel: SubscribeChannel): Promise<IExecuteResult> {
+  execute(container: Dockerode.Container, request: IFilesRequest, mapping: ICompilerMappingItem, channel: SubscribeChannel): Promise<IExecuteResult> {
     const stopwatch = StopWatch.start();
-    this.logger.info(`compile-service: execute request=${JSON.stringify(request)}`);
+    this.logger.info(`default-execute-strategy-service: execute request=${JSON.stringify(request)}`);
 
     return new Promise<IExecuteResult>((resolve, reject) => {
       try {
         const filePaths = [];
         this.getFilePaths(request.files, "./", filePaths);
 
-        const runtimeCmd = `${mapping.runtime} ${mapping.runtimeOption(filePaths)}`;
+        const runtimeOption = (mapping.runtimeOption && mapping.runtimeOption(filePaths, request.entry)) || "";
+        const runtimeCmd = `${mapping.runtime} ${runtimeOption}`;
         const dockerCmd = `docker exec ${container.id} ${runtimeCmd}`;
-        this.logger.info(`compile-service: execute container=${container.id}, dockerCmd=${dockerCmd}`);
+        this.logger.info(`default-execute-strategy-service: execute container=${container.id}, dockerCmd=${dockerCmd}`);
 
         const proc = child.exec(dockerCmd, (error, stdout, stderr) => {
-          this.logger.info(`compile-service: execute child.exec container=${container.id}, error=${JSON.stringify({error, stderr, stdout})}`);
-          this.logger.info(`compile-service: execute child.exec end container=${container.id}, elapsed=${stopwatch.end().elapsed}`);
+          this.logger.info(`default-execute-strategy-service: execute child.exec container=${container.id}, error=${JSON.stringify({error, stderr, stdout})}`);
+          this.logger.info(`default-execute-strategy-service: execute child.exec end container=${container.id}, elapsed=${stopwatch.end().elapsed}`);
 
           resolve({
             stderr,
             stdout,
             success: !error,
             elapsed: stopwatch.elapsed
-          })
+          });
         });
       } catch(e) {
         this.logger.error(e);
