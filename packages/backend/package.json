@@ -50,7 +50,7 @@
     "rxjs": "^6.2.2",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "3.8.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "memorystream": "^0.3.1",
     "node-pty": "^0.8.1",
     "strip-ansi": "^5.2.0"
