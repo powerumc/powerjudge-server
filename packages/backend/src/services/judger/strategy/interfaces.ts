@@ -7,7 +7,7 @@ export interface ICreateContainerStrategy {
 }
 
 export interface ICompileStrategy {
-  compile(container: Dockerode.Container, message, request, mapping: ICompilerMappingItem): Promise<IExecuteResult>;
+  compile(container: Dockerode.Container, message, request: IFilesRequest, mapping: ICompilerMappingItem): Promise<IExecuteResult>;
 }
 
 export interface IExecuteStrategy {

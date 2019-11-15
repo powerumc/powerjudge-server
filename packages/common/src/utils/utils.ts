@@ -67,6 +67,7 @@ export class StopWatch {
 export class Timeout<T> {
   private timer;
   private timeoutCallback: () => any;
+  private finishCallback: () => any;
 
   constructor(private promise: Promise<T>,
               private ms: number) {
@@ -79,6 +80,9 @@ export class Timeout<T> {
         resolve(this.timeoutCallback());
       }, this.ms);
 
+      if (this.finishCallback) {
+        this.promise.then(this.finishCallback);
+      }
       this.promise.then(resolve, reject);
     });
   }
@@ -89,6 +93,12 @@ export class Timeout<T> {
 
   timeout(callback: () => any): this {
     this.timeoutCallback = callback;
+
+    return this;
+  }
+
+  finish(callback: () => any): this {
+    this.finishCallback = callback;
 
     return this;
   }

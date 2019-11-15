@@ -6,7 +6,7 @@ import {ApplicationLoggerService} from "../logging";
 export class SubscribeChannel extends EventEmitter {
 
   constructor(private client: Redis.Redis,
-              private key: string,
+              public key: string,
               private sender: string,
               private logger: ApplicationLoggerService) {
     super();
@@ -30,10 +30,11 @@ export class SubscribeChannel extends EventEmitter {
   }
 
   onMessage(channel: string, data: string): void {
+    this.logger.info(`ioredis: subscribe-channel onMessage: ${channel}, ${data}`);
+
     const message = <IRedisPubSubMessage>JSON.parse(data);
     if (message.sender == this.sender) return;
 
-    this.logger.info(`ioredis: subscribe-channel onMessage: ${channel}, ${data}`);
     super.emit("message", message);
   }
 }
