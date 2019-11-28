@@ -12,21 +12,21 @@
   "author": "powerumc",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@nestjs/common": "^6.2.0",
-    "@nestjs/core": "^6.2.0",
+    "@nestjs/common": "^6.10.2",
+    "@nestjs/core": "^6.10.2",
     "@nestjs/mongoose": "^6.1.2",
-    "@nestjs/platform-express": "^6.2.0",
-    "@nestjs/platform-socket.io": "^6.2.0",
-    "@nestjs/websockets": "^6.2.0",
+    "@nestjs/platform-express": "^6.10.2",
+    "@nestjs/platform-socket.io": "^6.10.2",
+    "@nestjs/websockets": "^6.10.2",
     "guid-typescript": "^1.0.9",
     "ioredis": "^4.6.2",
     "kafka-node": "^4.0.2",
     "mongoose": "^5.4.20",
     "reflect-metadata": "^0.1.13",
+    "rimraf": "^2.6.3",
     "rxjs": "^6.2.2",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "3.8.0",
-    "rimraf": "^2.6.3"
+    "winston-daily-rotate-file": "3.8.0"
   },
   "devDependencies": {
     "@types/node": "^10.12.24",
