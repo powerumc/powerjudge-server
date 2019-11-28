@@ -47,7 +47,7 @@
     "guid-typescript": "^1.0.9",
     "kafka-node": "^4.0.4",
     "lodash": "^4.17.15",
-    "mongoose": "^5.4.20",
+    "mongoose": "^5.7.5",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.2.2",
     "socket.io-redis": "5.2.0",
