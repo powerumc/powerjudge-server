@@ -21,7 +21,7 @@
     "guid-typescript": "^1.0.9",
     "ioredis": "^4.6.2",
     "kafka-node": "^4.0.2",
-    "mongoose": "^5.4.20",
+    "mongoose": "^5.7.5",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^2.6.3",
     "rxjs": "^6.2.2",
