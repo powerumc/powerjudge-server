@@ -46,7 +46,7 @@
     "dockerode": "^2.5.8",
     "guid-typescript": "^1.0.9",
     "kafka-node": "^4.0.4",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "mongoose": "^5.7.5",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.2.2",
